@@ -51,8 +51,8 @@ export class HomePage {
     var contents: Array<any> = [];
     if (userType === 'student') {
       contents = [
-        {type:"Quiz", selected: false, question: 'As a student, give me 5 MCQ with correct answer for this chapter'},
-        {type:"Summary", selected: false, question: 'As a student, give me an easy to understand summary of this chapter'},
+        {type:"Quiz", selected: false, question: 'As a student, give me 5 MCQ with correct answer for this ' + + this.chapterTilte},
+        {type:"Summary", selected: false, question: 'As a student, give me an easy to understand summary of this ' + + this.chapterTilte},
         {type:"Important Words", selected: false, question: 'As a student, tell me important words with their meanings about this chapter that I should learn'}];
     } else if (userType === 'teacher') {
       contents = [
@@ -62,7 +62,7 @@ export class HomePage {
     }
   
     const requestParam: NavigationExtras = {
-      state: {role: userType, contents, isQrCode: false}
+      state: {role: userType, contents, isQrCode: false, chapter: this.chapterTilte}
     }
     await this.router.navigate(['./chapter-details-option'], requestParam);
   }

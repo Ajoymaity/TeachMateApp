@@ -15,7 +15,7 @@ export class ChapterDetailsOptionPage {
     private router: Router
   ) { 
     this.query = this.router.getCurrentNavigation()?.extras?.state
-   // this.chapterName = this.query.chapter ? this.query.chapter : '';
+   this.chapterName = this.query.chapter;
     this.contents = this.query.contents ? this.query.contents : this.contents;
     console.log(this.query);
   }
@@ -29,7 +29,7 @@ export class ChapterDetailsOptionPage {
           question = cont.question
         }
       })
-      await this.router.navigate(['content-details'], {queryParams: {query: question, isQrCode: this.query.isQrCode, content: this.contents}})
+      await this.router.navigate(['content-details'], {queryParams: {query: question, chapter: this.chapterName, content: this.contents}})
     }
   }
 }
