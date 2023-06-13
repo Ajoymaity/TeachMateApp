@@ -8,8 +8,27 @@
 
 <ion-content>
   <div id="container">
-    <h2>Welcome to Learner App</h2>
   </div>
+    <div class="container">
+      <div class="card" (click)="selectedUser('teacher')">
+          <div class="card-container" role="button" >
+              <div class="check-icon">
+                  <img class="icon-check" alt="" src="assets/ic_teacher.svg"/>
+              </div>
+              <h4 class="card-title sb__ellipsis sb__ellipsis--two">Teacher</h4>
+          </div>
+      </div>
+  
+    <div class="card" (click)="selectedUser('student')">
+        <div class="card-container" role="button" >
+            <div class="check-icon">
+                <img class="icon-check" alt="" src="assets/ic_student.svg"/>
+            </div>
+            <h4 class="card-title sb__ellipsis sb__ellipsis--two">Student</h4>
+        </div>
+    </div>
+</div>  
+
 </ion-content>
 
 <ion-footer>

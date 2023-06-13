@@ -26,6 +26,6 @@
 
 <ion-footer>
   <ion-item>
-    <ion-input style="background-color: white;" placeholder="Ask your question"></ion-input>
+    <ion-input style="background-color: white;" placeholder="Ask your question" [(ngModel)]="question" (keyup.enter)="askQuestion()"></ion-input>
   </ion-item>
 </ion-footer>

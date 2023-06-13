@@ -17,6 +17,7 @@ export class ContentDetailsPage implements OnInit {
   query: any;
   qUrl: string = "";
   question: string = '';
+  isQrCode: boolean = false;
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -27,33 +28,45 @@ export class ContentDetailsPage implements OnInit {
     if(data) {
       this.contents = data['content'];
       this.query = data['query'];
-      this.chapterName = this.query.chapter;
-      this.qUrl = `Give%20me%20${this.query.class}%20${this.query.subject}%20${this.query.chapter}`;
+      this.isQrCode = data['isQrCode'];
+      if (this.query && this.query.chapter) {
+        this.chapterName = this.query.chapter || '';
+        this.qUrl = `Give%20me%20${this.query.class}%20${this.query.subject}%20${this.query.chapter}`;
+      } else {
+        this.qUrl = data['query'].split(' ').join('%20')
+      }
     }
   }
 
   async ngOnInit() {
     let selectedContent;
-    this.contents.forEach(a => {
-      if (a.selected) {
-        selectedContent = a.type
-    }});
-    let url = `${environment.baseUrl}=${this.qUrl}&${selectedContent}`;
+    if (this.query && this.query.chapter) {
+      this.contents.forEach(a => {
+        if (a.selected) {
+          selectedContent = a.type
+      }});
+    }
+    
+    let url = selectedContent ? `${environment.baseUrl}=${this.qUrl}&${selectedContent}`: `${environment.baseUrl}=${this.qUrl}`;
     await this.getData(url);
   }
 
   async navigateToContentDetails(chip: any) {
+    let quetionUrl;
       this.contents.forEach(cont => {
         if(chip.selected) {
           cont.selected = (cont.type == chip.type) ? true : false;
+          quetionUrl = cont.question.split(' ').join('%20')
+          console.log(cont,  'cont');
         }
       });
-      let url = `${environment.baseUrl}=${this.qUrl}&${chip.type}`;
+      let url = `${environment.baseUrl}=${quetionUrl}&${chip.type}`;
       console.log(url,  'url');
       await this.getData(url);
   }
 
   async getData(url: any) {
+    console.log('............', url)
     this.loadingCtrl = await this.loader.create({
       cssClass: 'custom-loader-message-class',
       spinner: 'circular',
