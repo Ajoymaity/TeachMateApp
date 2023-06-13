@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar class="toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Quiz for {{chapterName}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div style="display: flex; margin-top: 10px; overflow-x:auto; white-space: nowrap;">
+    <div *ngFor="let chip of contents">
+      <ion-chip [ngClass]="{'selecetd': chip.selected == true}" (click)="navigateToContentDetails(chip)">{{chip.type}}</ion-chip>
+    </div>
+  </div>
+  <div>
+    <ion-card color="medium">
+      <ion-card-header>
+        <ion-card-title>{{cardData}}</ion-card-title>
+        <ion-content></ion-content>
+      </ion-card-header>
+    </ion-card>
+  </div>
+  
+</ion-content>
+
+<ion-footer>
+  <ion-item>
+    <ion-input style="background-color: white;" placeholder="Ask your question"></ion-input>
+  </ion-item>
+</ion-footer>

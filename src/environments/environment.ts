@@ -3,6 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  baseUrl: "https://ncfchat.sunbird.org/ncert/ask?q",
   production: false
 };
 

@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar class="toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Learn {{chapterName}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="container">
+    <div class="card" *ngFor="let content of contents" (click)="selectedContent = content; navigateToContentDetails()">
+      <label class="selection" [for]="content">
+        <span class="label-text">
+          {{content.type}}
+        </span>
+      </label>
+    </div>
+  </div>
+</ion-content>

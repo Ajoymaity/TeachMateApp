@@ -15,13 +15,12 @@ export class HomePage {
   ) {}
 
   URLToObject(url: any) {
-    var request: any = {};
-    var pairs = url.split('?')[1].split('&');
-    for (var i = 0; i < pairs.length; i++) {
-        if(!pairs[i])
+    let request: any = {};
+    let pairs = url.split('?')[1].split('&');
+    for (const ele of pairs) {
+        if(!ele)
             continue;
-        
-        var pair = pairs[i].split('=');
+        let pair = ele.split('=');
         request[pair[0]] = pair[1];
      }
      return request;
@@ -32,7 +31,7 @@ export class HomePage {
       const requestParam: NavigationExtras = {
         state: this.URLToObject(barcodeData.text)
       }
-      this.router.navigate(['./chapter-details-option'], requestParam);
+      await this.router.navigate(['./chapter-details-option'], requestParam);
      }).catch(err => {
          console.log('Error', err);
      });
