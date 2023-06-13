@@ -43,8 +43,8 @@ export class ContentDetailsPage implements OnInit {
 
   async navigateToContentDetails(chip: any) {
       this.contents.forEach(cont => {
-        if(chip.selected && cont.type == chip.type) {
-          cont.selected = true;
+        if(chip.selected) {
+          cont.selected = (cont.type == chip.type) ? true : false;
         }
       });
       let url = `${environment.baseUrl}=${this.qUrl}&${chip.type}`;
