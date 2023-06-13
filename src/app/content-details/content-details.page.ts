@@ -16,6 +16,7 @@ export class ContentDetailsPage implements OnInit {
   loadingCtrl: any;
   query: any;
   qUrl: string = "";
+  question: string = '';
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -73,5 +74,15 @@ export class ContentDetailsPage implements OnInit {
             }
           }
       })
+  }
+
+  askQuestion() {
+    this.question = this.question.split(' ').join('%20');
+    var uuid_number = '8800c6da-0919-11ee-9081-0242ac110002';
+    let url = `${environment.questionGptUrl}?uuid_number=${uuid_number}&query_string=${this.question}`;
+    console.log('url is', url)
+    this.http.get(url, {responseType: 'text'}).subscribe( (res) => {
+      console.log('.....................', res)
+    })
   }
 }
