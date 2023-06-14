@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 })
 export class ChapterDetailsOptionPage {
   chapterName: string = "";
-  selectedContent: any;
+  selectedContent: any = {};
   query: any;
   contents: Array<any> = [{type:"Quiz", selected: false}, {type:"Revise", selected: false}, {type:"worksheet", selected: false}, {type:"Important words", selected: false}, {type:"Activites", selected: false}, {type:"Teach", selected: false}]
   constructor(

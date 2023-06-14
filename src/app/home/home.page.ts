@@ -1,12 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
-import { Config } from '@ionic/angular';
-import { json } from 'express';
-import { Observable } from 'rxjs';
-import {map} from 'rxjs/operators';
-import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 
 @Component({
   selector: 'app-home',
@@ -17,12 +12,26 @@ export class HomePage {
 
   question: string = "";
   chapterTilte='light'
+  supportedUserTypeConfig: Array<any> = []
+  selectedUserType: any;
 
   constructor(
     private router: Router,
-    private barcodeScanner: BarcodeScanner,
-    private http: HttpClient,
-  ) {}
+    private barcodeScanner: BarcodeScanner
+  ) {
+    // this.supportedUserTypeConfig = [ {
+    //   name: "Teacher",
+    //   code: 'teacher',
+    //   isActive: true,
+    //   image: 'ic_teacher.svg'
+    // },
+    // {
+    //   name: "Student",
+    //   code: 'student',
+    //   isActive: true,
+    //   image: 'ic_student.svg'
+    // }]
+  }
 
   URLToObject(url: any) {
     let request: any = {};

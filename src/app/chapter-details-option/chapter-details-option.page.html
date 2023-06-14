@@ -10,7 +10,7 @@
 <ion-content>
 
   <div class="container">
-    <div class="card" *ngFor="let content of contents" (click)="selectedContent = content; navigateToContentDetails()">
+    <div class="card" *ngFor="let content of contents" (click)="selectedContent = content;">
       <label class="selection" [for]="content">
         <span class="label-text">
           {{content.type}}
@@ -18,4 +18,6 @@
       </label>
     </div>
   </div>
+
+  <ion-button type="submit" expand="block" class="sign-in" (click)="navigateToContentDetails()" [disabled]="!selectedContent">Continue</ion-button>
 </ion-content>
