@@ -3,14 +3,14 @@
     <ion-buttons slot="start">
       <ion-back-button style="color: black;"></ion-back-button>
     </ion-buttons>
-    <ion-title>Learn {{chapterName}}</ion-title>
+    <ion-title>{{chapterName}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div id="container">
-    <h4 *ngIf="query.role == 'Student'">Hi {{query.role}}, What do you want to learn today? </h4>
-    <h4 *ngIf="query.role == 'Teacher'">Hi {{query.role}}, What do you want to teach today? </h4>
+    <h4 *ngIf="query.role == 'Student'">What do you want to learn? </h4>
+    <h4 *ngIf="query.role == 'Teacher'">What do you want to teach? </h4>
   </div>
   <div class="container">
     <div class="card" *ngFor="let content of contents" (click)="selectedContent = content">
