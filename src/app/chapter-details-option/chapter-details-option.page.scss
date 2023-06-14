@@ -1,3 +1,6 @@
+#container {
+  text-align: center;
+}
 
 .container {
     display: flex;
@@ -13,7 +16,9 @@
     outline: none;
     border-radius: 1rem;
   }
-  
+  .selected {
+    border:3px solid #5d90c4;
+  }
   .selected-card {
     .selection {
       background-color: var(--app-primary) !important;

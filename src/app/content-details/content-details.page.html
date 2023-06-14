@@ -3,14 +3,14 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Quiz for {{chapterName}}</ion-title>
+    <ion-title>{{selectedChip}} for {{chapterName}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div style="display: flex; margin-top: 10px; overflow-x:auto; white-space: nowrap;">
     <div *ngFor="let chip of contents">
-      <ion-chip [ngClass]="{'selecetd': chip.selected == true}" (click)="navigateToContentDetails(chip)">{{chip.type}}</ion-chip>
+      <ion-chip [disabled]="disableSelect" [ngClass]="{'selecetd': chip.type == selectedChip}" (click)="navigateToContentDetails(chip)">{{chip.type}}</ion-chip>
     </div>
   </div>
   <div *ngFor="let msg of messages">
@@ -26,7 +26,7 @@
 </ion-content>
 
 <ion-footer>
-  <ion-item>
+  <ion-item [disabled]="disableSelect">
     <ion-input style="background-color: white;" placeholder="Ask your question" [(ngModel)]="question" (keyup.enter)="askQuestion()"></ion-input>
     <button class="button button-clear" (click)="askQuestion()">
       <ion-icon name="send-outline" style="width: 2rem; height: 1.5rem; padding: 7px 0;"></ion-icon>

@@ -20,18 +20,16 @@ export class HomePage {
     private router: Router,
     private barcodeScanner: BarcodeScanner
   ) {
-    // this.supportedUserTypeConfig = [ {
-    //   name: "Teacher",
-    //   code: 'teacher',
-    //   isActive: true,
-    //   image: 'ic_teacher.svg'
-    // },
-    // {
-    //   name: "Student",
-    //   code: 'student',
-    //   isActive: true,
-    //   image: 'ic_student.svg'
-    // }]
+    this.supportedUserTypeConfig = [ {
+      name: "Teacher",
+      code: 'teacher',
+      image: 'ic_teacher.svg'
+    },
+    {
+      name: "Student",
+      code: 'student',
+      image: 'ic_student.svg'
+    }]
   }
 
   URLToObject(url: any) {
@@ -59,15 +57,16 @@ export class HomePage {
     }
   }
 
-  async selectedUser(userType: string) {
+  async selectedUser(userType: string, code: string) {
+    this.selectedUserType = code;
     this.userType = userType;
     var contents: Array<any> = [];
-    if (userType === 'student') {
+    if (userType === 'Student') {
       contents = [
         {type:"Quiz", selected: false, question: 'As a student, give me 5 MCQ with correct answer for this ' + this.chapterTilte},
         {type:"Summary", selected: false, question: 'As a student, give me an easy to understand summary of this ' + this.chapterTilte},
         {type:"Important Words", selected: false, question: 'As a student, tell me important words with their meanings about this chapter that I should learn'}];
-    } else if (userType === 'teacher') {
+    } else if (userType === 'Teacher') {
       contents = [
         {type:"Quiz", selected: false, question: 'Generate 5 MCQ for this ' + this.chapterTilte},
         {type:"Summary", selected: false, question: 'Summarize ' + this.chapterTilte},
