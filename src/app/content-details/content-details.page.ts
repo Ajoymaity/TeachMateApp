@@ -101,7 +101,7 @@ export class ContentDetailsPage implements OnInit {
         console.log('teacherrrrrrrr', data)
         let output = `<div style="width: 100%; color: black"> <p>Here are courses which can help you learn more about this chapter:<p>`;
         data.result.content.forEach(item => {
-          output += `<p style="color: black">${item.name}. <a href='https://diksha.gov.in/explore-course/course/${item.identifier}'>https://diksha.gov.in/explore-course/course/${item.identifier}</a></p>`
+          output += `<p style="color: black"><a href='https://diksha.gov.in/explore-course/course/${item.identifier}'>${item.name}</a></p>`
         });
         output +=`</div>`
         console.log('output', output);
