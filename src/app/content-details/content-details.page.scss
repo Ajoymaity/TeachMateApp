@@ -4,5 +4,32 @@
 }
 
 .text-style{
-    white-space: pre-wrap
+    white-space: pre-wrap !important
+}
+
+
+.float-left {
+    float: left;
+    display: flex;
+    width: 80%;
+    
+    .img {
+        border-bottom-left-radius: 0;
+    }
+}
+
+.float-right {
+    float: right;
+    display: flex;
+    width: '80%';
+
+    ion-icon{
+        border-bottom-right-radius: 0;
+    }
+}
+
+img {
+  max-width: 12% !important;
+  height: 2.5rem;
+  padding: 7px 0;
 }
