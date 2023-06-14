@@ -150,12 +150,12 @@ export class HomePage {
     var contents: Array<any> = [];
     if (userType === 'Student') {
       contents = [
-        {type:"Quiz", selected: false, question: 'As a student, give me 5 MCQ with correct answer for this ' + this.chapterTilte},
-        {type:"Summary", selected: false, question: 'As a student, give me an easy to understand summary of this ' + this.chapterTilte},
+        {type:"Quiz", selected: false, question: 'As a student, give me 5 MCQ with correct answer for ' + this.chapterTilte},
+        {type:"Summary", selected: false, question: 'As a student, give me an easy to understand summary of ' + this.chapterTilte},
         {type:"Important Words", selected: false, question: 'As a student, tell me important words with their meanings about this chapter that I should learn'}];
     } else if (userType === 'Teacher') {
       contents = [
-        {type:"Quiz", selected: false, question: 'Generate 5 MCQ for this ' + this.chapterTilte},
+        {type:"Quiz", selected: false, question: 'Generate 5 MCQ for ' + this.chapterTilte},
         {type:"Summary", selected: false, question: 'Summarize ' + this.chapterTilte},
         {type:"Important Words", selected: false, question: 'how to teach ' + this.chapterTilte + ' with activities'}];
     }
