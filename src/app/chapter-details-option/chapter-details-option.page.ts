@@ -15,17 +15,21 @@ export class ChapterDetailsOptionPage {
     private router: Router
   ) { 
     this.query = this.router.getCurrentNavigation()?.extras?.state
-    this.chapterName = this.query.chapter
+   this.chapterName = this.query.chapter;
+    this.contents = this.query.contents ? this.query.contents : this.contents;
+    console.log(this.query);
   }
 
   async navigateToContentDetails() {
+    let question = '';
     if (this.selectedContent) {
       this.contents.forEach(cont => {
         if(cont.type == this.selectedContent.type) {
           cont.selected = true;
+          question = cont.question
         }
       })
-      await this.router.navigate(['content-details'], {queryParams: {query: this.query, content: this.contents}})
+      await this.router.navigate(['content-details'], {queryParams: {query: question, chapter: this.chapterName, content: this.contents}})
     }
   }
 }
