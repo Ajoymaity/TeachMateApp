@@ -56,7 +56,7 @@ export class HomePage {
           if (data && data.result && data.result.content) {
             let contentDEtails = {
               name: data.result.content[0].name,
-              gradeLevel: data.result.content[0].gradeLevel.join(','),
+              gradeLevel: data.result.content[0].gradeLevel?.join(','),
               subject: data.result.content[0].subject,
               board: data.result.content[0].organisation,
               medium: data.result.content[0].medium
