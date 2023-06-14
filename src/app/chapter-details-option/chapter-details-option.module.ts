@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { ChapterDetailsOptionPageRoutingModule } from './chapter-details-option-routing.module';
 
 import { ChapterDetailsOptionPage } from './chapter-details-option.page';
-import { NCFChatService } from '../ncfchat.service';
+//import { NCFChatService } from '../ncfchat.service';
 
 @NgModule({
   imports: [
@@ -17,6 +17,6 @@ import { NCFChatService } from '../ncfchat.service';
     ChapterDetailsOptionPageRoutingModule
   ],
   declarations: [ChapterDetailsOptionPage],
-  providers: [NCFChatService]
+  providers: []
 })
 export class ChapterDetailsOptionPageModule {}
