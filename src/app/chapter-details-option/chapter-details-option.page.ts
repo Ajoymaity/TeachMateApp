@@ -27,6 +27,8 @@ export class ChapterDetailsOptionPage {
         if(cont.type == this.selectedContent.type) {
           cont.selected = true;
           question = cont.question
+        } else {
+          cont.selected = false;
         }
       })
       await this.router.navigate(['content-details'], {queryParams: {query: question, chapter: this.chapterName, content: this.contents, details: this.query.details}})
