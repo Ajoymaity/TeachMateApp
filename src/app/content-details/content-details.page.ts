@@ -22,6 +22,7 @@ export class ContentDetailsPage implements OnInit {
   messages: Array<any> = [];
   selectedChip: any;
   disableSelect: boolean = true;
+  details: any;
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -33,8 +34,8 @@ export class ContentDetailsPage implements OnInit {
       this.contents = data['content'];
       this.query = data['query'];
       this.chapterName = data['chapter'] || '';
-      this.qUrl = data['query'].split(' ').join('%20')
-        // this.qUrl = `Give%20me%20${this.query.class}%20${this.query.subject}%20${this.query.chapter}`;
+      this.qUrl = data['query'].split(' ').join('%20');
+      this.details = data['details']
     }
   }
 
@@ -61,7 +62,7 @@ export class ContentDetailsPage implements OnInit {
         console.log(cont,  'cont');
       }
     });
-    let url = `${environment.baseUrl}=${quetionUrl}`;
+    let url = `${environment.questionGptUrl}=${quetionUrl}`;
     console.log(url,  'url');
     this.getData(url);
   }
@@ -78,11 +79,12 @@ export class ContentDetailsPage implements OnInit {
 
   askQuestion() {
     let msg;
-    msg = {text: this.question, from: Creator.Me}
+    window.scrollTo(0,document.body.scrollHeight);
+    msg = {text: this.question, from: Creator.Me};
     this.messages.push(msg);
     this.disableSelect = true;
     this.question = this.question.split(' ').join('%20');
-    var uuid_number = '8800c6da-0919-11ee-9081-0242ac110002';
+    var uuid_number = this.details.gradeLevel.toLowerCase().include('class 8') ? '4c67c7f4-0919-11ee-9081-0242ac110002' : '8800c6da-0919-11ee-9081-0242ac110002';
     let url = `${environment.questionGptUrl}?uuid_number=${uuid_number}&query_string=${this.question}`;
     console.log('url is', url)
     this.question = "";

@@ -12,8 +12,8 @@
     float: left;
     display: flex;
     width: 80%;
-    
-    .img {
+    padding-left: 6px;
+    ion-chip {
         border-bottom-left-radius: 0;
     }
 }
@@ -21,9 +21,8 @@
 .float-right {
     float: right;
     display: flex;
-    width: '80%';
 
-    ion-icon{
+    ion-chip {
         border-bottom-right-radius: 0;
     }
 }

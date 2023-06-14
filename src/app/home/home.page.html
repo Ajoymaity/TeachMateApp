@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar class="toolbar">
-    <ion-title>
-      Ed Saathi
+    <ion-title style="font-size: 20px;">
+      <ion-label>Ed Saathi</ion-label>
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,7 +9,7 @@
 <ion-content>
   <div class="container">
     <div class="card" *ngFor="let userTypeConfig of supportedUserTypeConfig;">
-      <div class="card-container" role="button" (click)="selectedUser(userTypeConfig?.name, userTypeConfig?.code)" [class.selected]="selectedUserType === userTypeConfig?.code">
+      <div class="card-container" role="button" (click)="selectedUserType = userTypeConfig?.code; userType = userTypeConfig.name;" [class.selected]="selectedUserType === userTypeConfig?.code">
         <div class="check-icon">
             <img class="icon-check" alt="" [class.selected]="selectedUserType === userTypeConfig?.code" src="assets/imgs/ic_check.svg"/>
         </div>
@@ -25,7 +25,7 @@
   <div class="qr-btn-container">
     <div class="qr-btn" role="button" (click)="openQRScanner()">
       <img src="assets/ic_qr_scanner.svg" alt="">
-      <span>scan</span>
+      <span>Scan</span>
     </div>
   </div>
 </ion-footer>

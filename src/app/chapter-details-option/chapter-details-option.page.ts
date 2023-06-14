@@ -29,7 +29,7 @@ export class ChapterDetailsOptionPage {
           question = cont.question
         }
       })
-      await this.router.navigate(['content-details'], {queryParams: {query: question, chapter: this.chapterName, content: this.contents}})
+      await this.router.navigate(['content-details'], {queryParams: {query: question, chapter: this.chapterName, content: this.contents, details: this.query.details}})
     }
   }
 }

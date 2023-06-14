@@ -75,7 +75,7 @@ export interface Value {
 export class HomePage {
 
   question: string = "";
-  chapterTilte='light';
+  chapterTilte='12-SOME NATURAL PHENOMENA';
   userType = '';
   supportedUserTypeConfig: Array<any> = []
   selectedUserType: any;
@@ -118,11 +118,12 @@ export class HomePage {
           if (data && data.result && data.result.content) {
             let contentDEtails = {
               name: data.result.content[0].name,
-              gradeLevel: data.result.content[0].gradeLevel,
+              gradeLevel: data.result.content[0].gradeLevel.join(','),
               subject: data.result.content[0].subject,
               board: data.result.content[0].organisation,
               medium: data.result.content[0].medium
             }
+            this.chapterTilte = contentDEtails.name
             this.selectedUser(this.userType, '', contentDEtails) 
           }
           // const requestParam: NavigationExtras = {
@@ -160,7 +161,7 @@ export class HomePage {
     }
   
     const requestParam: NavigationExtras = {
-      state: {role: userType, contents, isQrCode: false, chapter: this.chapterTilte, contentDetails}
+      state: {role: userType, contents, isQrCode: false, chapter: this.chapterTilte, details: contentDetails}
     }
     await this.router.navigate(['./chapter-details-option'], requestParam);
   }
@@ -175,7 +176,26 @@ export class HomePage {
             "Content Playlist",
             "Course",
             "Course Assessment",
-            "Digital Textbook"
+            "Digital Textbook",
+            "eTextbook",
+            "Explanation Content",
+            "Learning Resource",
+            "Lesson Plan Unit",
+            "Practice Question Set",
+            "Teacher Resource",
+            "Textbook Unit",
+            "LessonPlan",
+            "FocusSpot",
+            "Learning Outcome Definition",
+            "Curiosity Questions",
+            "MarkingSchemeRubric",
+            "ExplanationResource",
+            "ExperientialResource",
+            "Practice Resource",
+            "TVLesson",
+            "Course Unit",
+            "Exam Question",
+            "Question paper"
           ],
           "visibility": [
             "Default",

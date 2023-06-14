@@ -34,8 +34,20 @@ ion-content, ion-item {
     --background: #FFD954;
     background: #FFD954;
     border-bottom-left-radius: 20px;
+  ion-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    ion-label {
+      color: black;
+    }
+  }
 }
   
+h4 {
+  color: black;
+}
+
 ion-footer{
   background-color: #FFD954;
 }

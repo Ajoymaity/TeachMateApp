@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar class="toolbar">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button style="color: black;"></ion-back-button>
     </ion-buttons>
     <ion-title>Learn {{chapterName}}</ion-title>
   </ion-toolbar>
@@ -9,12 +9,13 @@
 
 <ion-content>
   <div id="container">
-    <h4>Hi {{query.role}}, What do you want to learn today? </h4>
+    <h4 *ngIf="query.role == 'Student'">Hi {{query.role}}, What do you want to learn today? </h4>
+    <h4 *ngIf="query.role == 'Teacher'">Hi {{query.role}}, What do you want to teach today? </h4>
   </div>
   <div class="container">
     <div class="card" *ngFor="let content of contents" (click)="selectedContent = content">
       <label class="selection" [for]="content" [class.selected]="selectedContent === content">
-        <span class="label-text">
+        <span class="label-text" style="color: black;">
           {{content.type}}
         </span>
       </label>
