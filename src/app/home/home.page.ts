@@ -16,7 +16,8 @@ import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 export class HomePage {
 
   question: string = "";
-  chapterTilte='light'
+  chapterTilte='light';
+  userType = '';
 
   constructor(
     private router: Router,
@@ -36,23 +37,26 @@ export class HomePage {
      return request;
 }
   openQRScanner() {
-    this.barcodeScanner.scan().then(async (barcodeData) => {
-      console.log('Barcode data', barcodeData);
-      const requestParam: NavigationExtras = {
-        state: this.URLToObject(barcodeData.text)
-      }
-      await this.router.navigate(['./chapter-details-option'], requestParam);
-     }).catch(err => {
-         console.log('Error', err);
-     });
+    if (this.userType) {
+      this.barcodeScanner.scan().then(async (barcodeData) => {
+        console.log('Barcode data', barcodeData);
+        const requestParam: NavigationExtras = {
+          state: this.URLToObject(barcodeData.text)
+        }
+        await this.router.navigate(['./chapter-details-option'], requestParam);
+       }).catch(err => {
+           console.log('Error', err);
+       });
+    }
   }
 
   async selectedUser(userType: string) {
+    this.userType = userType;
     var contents: Array<any> = [];
     if (userType === 'student') {
       contents = [
-        {type:"Quiz", selected: false, question: 'As a student, give me 5 MCQ with correct answer for this ' + + this.chapterTilte},
-        {type:"Summary", selected: false, question: 'As a student, give me an easy to understand summary of this ' + + this.chapterTilte},
+        {type:"Quiz", selected: false, question: 'As a student, give me 5 MCQ with correct answer for this ' + this.chapterTilte},
+        {type:"Summary", selected: false, question: 'As a student, give me an easy to understand summary of this ' + this.chapterTilte},
         {type:"Important Words", selected: false, question: 'As a student, tell me important words with their meanings about this chapter that I should learn'}];
     } else if (userType === 'teacher') {
       contents = [
