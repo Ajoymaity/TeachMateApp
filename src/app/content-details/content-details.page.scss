@@ -21,7 +21,8 @@
 .float-right {
     float: right;
     display: flex;
-    width: 80%;
+    margin-left: 20%;
+
     ion-chip {
         border-bottom-right-radius: 0;
     }
