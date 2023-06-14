@@ -94,7 +94,7 @@ export class HomePage {
     } else if (userType === 'Teacher') {
       contents = [
         {type:"Quiz", selected: false, question: 'Generate 5 MCQ for ' + this.chapterTilte, name: "help-circle",  color: 'primary'},
-        {type:"Chapter Summary", selected: false, question: 'Summarize ' + this.chapterTilte, name: "document", color: 'success'},
+        {type:"Summary", selected: false, question: 'Summarize ' + this.chapterTilte, name: "document", color: 'success'},
         {type:"Teacher Aid", selected: false, question: 'how to teach ' + this.chapterTilte + ' with activities', name: "book", color: 'warning'}];
     }
   

@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 import { Response } from '../response';
 enum Creator {
@@ -83,24 +82,35 @@ export class ContentDetailsPage implements OnInit {
       console.log('res ', res);
       this.messages[this.messages.length-1].text = res && res.answer ? res['answer'] : "No Response";
       this.disableSelect = false;
-      if(this.selectedChip == "Teacher Aid" && this.userType !== 'Student') {
-        let msg = {text: '', from: Creator.Bot, innerHtml: true}
-        this.messages.push(msg);
-        this.getContentDetails().subscribe((data) => {
-          console.log('teacherrrrrrrr', data)
-          let output = `<div style="width: 100%; color: black"> <p>Here are courses which can help you learn more about this chapter:<p>`;
-          data.result.content.forEach(item => {
-            output += `<p style="color: black">${item.name}. <a href='https://diksha.gov.in/explore-course/course/${item.identifier}'>https://diksha.gov.in/explore-course/course/${item.identifier}</a></p>`
-          });
-          output +=`</div>`
-          console.log('output', output);
-          let ele = document.getElementById('chip');
-          console.log(ele, 'ele');
-          if (ele) {
-            ele.innerHTML = output;
-          }
-        })
+      let arr: Array<string> = [];
+      switch(this.selectedChip) {
+        case "Quiz":
+          arr = ["Practice Resource", "Practice Question Set"];
+          break;
+        case "Summary":
+        case "Important Words":
+          arr = ["Explanation Content"];
+          break;
+        case "Teacher Aid":
+          arr = ["Teacher Resource"];
+        break;
       }
+      let msg = {text: '', from: Creator.Bot, innerHtml: true}
+      this.messages.push(msg);
+      this.getContentDetails(arr).subscribe((data) => {
+        console.log('teacherrrrrrrr', data)
+        let output = `<div style="width: 100%; color: black"> <p>Here are courses which can help you learn more about this chapter:<p>`;
+        data.result.content.forEach(item => {
+          output += `<p style="color: black">${item.name}. <a href='https://diksha.gov.in/explore-course/course/${item.identifier}'>https://diksha.gov.in/explore-course/course/${item.identifier}</a></p>`
+        });
+        output +=`</div>`
+        console.log('output', output);
+        let ele = document.getElementById('chip');
+        console.log(ele, 'ele');
+        if (ele) {
+          ele.innerHTML = output;
+        }
+      })
     })
   }
 
