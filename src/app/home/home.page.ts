@@ -2,6 +2,70 @@ import { HttpClient } from '@angular/common/http';
 import { Component, NgZone } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
+import { environment } from 'src/environments/environment';
+
+export interface Response {
+  id:           string;
+  ver:          string;
+  ts:           Date;
+  params:       Params;
+  responseCode: string;
+  result:       Result;
+}
+
+export interface Params {
+  resmsgid: string;
+  msgid:    string;
+  status:   string;
+  err:      null;
+  errmsg:   null;
+}
+
+export interface Result {
+  count:   number;
+  content: Content[];
+  facets:  Facet[];
+}
+
+export interface Content {
+  trackable:       Trackable;
+  identifier:      string;
+  subject:         string[];
+  channel:         string;
+  organisation:    string[];
+  mimeType:        string;
+  medium:          string[];
+  pkgVersion:      number;
+  objectType:      string;
+  gradeLevel:      string[];
+  appIcon:         string;
+  primaryCategory: string;
+  name:            string;
+  contentType:     string;
+  board:           string;
+  resourceType:    string;
+  orgDetails:      OrgDetails;
+}
+
+export interface OrgDetails {
+  email:   null;
+  orgName: string;
+}
+
+export interface Trackable {
+  enabled:   string;
+  autoBatch: string;
+}
+
+export interface Facet {
+  values: Value[];
+  name:   string;
+}
+
+export interface Value {
+  name:  string;
+  count: number;
+}
 
 @Component({
   selector: 'app-home',
@@ -18,7 +82,8 @@ export class HomePage {
 
   constructor(
     private router: Router,
-    private barcodeScanner: BarcodeScanner
+    private barcodeScanner: BarcodeScanner,
+    private http: HttpClient
   ) {
     this.supportedUserTypeConfig = [ {
       name: "Teacher",
@@ -43,21 +108,42 @@ export class HomePage {
      }
      return request;
 }
-  openQRScanner() {
+  async openQRScanner() {
     if (this.userType) {
       this.barcodeScanner.scan().then(async (barcodeData) => {
         console.log('Barcode data', barcodeData);
-        const requestParam: NavigationExtras = {
-          state: this.URLToObject(barcodeData.text)
-        }
-        await this.router.navigate(['./chapter-details-option'], requestParam);
+        const data = (await this.getDialCodeInfo(barcodeData.text)).subscribe(async (data) => {
+          console.log('///////', data)
+
+          if (data && data.result && data.result.content) {
+            let contentDEtails = {
+              name: data.result.content[0].name,
+              gradeLevel: data.result.content[0].gradeLevel,
+              subject: data.result.content[0].subject,
+              board: data.result.content[0].organisation,
+              medium: data.result.content[0].medium
+            }
+            this.selectedUser(this.userType, '', contentDEtails) 
+          }
+          // const requestParam: NavigationExtras = {
+          //   state: {
+          //     name: content.name,
+          //     gradeLevel: content.gradeLevel,
+          //     subject: content.subject,
+          //     board: content.organisation,
+          //     medium: content.medium
+          //   }
+          // }
+          // await this.router.navigate(['./chapter-details-option'], requestParam);
+        });
+        console.log('...........', data)
        }).catch(err => {
            console.log('Error', err);
        });
     }
   }
 
-  async selectedUser(userType: string, code: string) {
+  async selectedUser(userType: string, code: string, contentDetails?: any) {
     this.selectedUserType = code;
     this.userType = userType;
     var contents: Array<any> = [];
@@ -74,9 +160,58 @@ export class HomePage {
     }
   
     const requestParam: NavigationExtras = {
-      state: {role: userType, contents, isQrCode: false, chapter: this.chapterTilte}
+      state: {role: userType, contents, isQrCode: false, chapter: this.chapterTilte, contentDetails}
     }
     await this.router.navigate(['./chapter-details-option'], requestParam);
+  }
+
+  async getDialCodeInfo(dialcode: string) {
+    return await this.http.post<Response>(environment.qrBaseUrl, {
+      "request": {
+        "filters": {
+          "primaryCategory": [
+            "Collection",
+            "Resource",
+            "Content Playlist",
+            "Course",
+            "Course Assessment",
+            "Digital Textbook"
+          ],
+          "visibility": [
+            "Default",
+            "Parent"
+          ]
+        },
+        "limit": 100,
+        "query": dialcode,
+        "sort_by": {
+          "lastPublishedOn": "desc"
+        },
+        "fields": [
+          "name",
+          "appIcon",
+          "mimeType",
+          "gradeLevel",
+          "identifier",
+          "medium",
+          "pkgVersion",
+          "board",
+          "subject",
+          "resourceType",
+          "primaryCategory",
+          "contentType",
+          "channel",
+          "organisation",
+          "trackable"
+        ],
+        "softConstraints": {
+          "badgeAssertions": 98,
+          "channel": 100
+        },
+        "mode": "soft",
+        "offset": 0
+      }
+    });
   }
 
 }
