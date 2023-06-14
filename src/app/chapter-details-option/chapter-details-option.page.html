@@ -8,14 +8,18 @@
 </ion-header>
 
 <ion-content>
-
+  <div id="container">
+    <h4>Hi {{query.role}}, What do you want to learn today? </h4>
+  </div>
   <div class="container">
-    <div class="card" *ngFor="let content of contents" (click)="selectedContent = content; navigateToContentDetails()">
-      <label class="selection" [for]="content">
+    <div class="card" *ngFor="let content of contents" (click)="selectedContent = content">
+      <label class="selection" [for]="content" [class.selected]="selectedContent === content">
         <span class="label-text">
           {{content.type}}
         </span>
       </label>
     </div>
   </div>
+
+  <ion-button type="submit" expand="block" class="sign-in" (click)="navigateToContentDetails()" [disabled]="!selectedContent">Continue</ion-button>
 </ion-content>

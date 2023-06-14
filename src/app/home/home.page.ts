@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 import { environment } from 'src/environments/environment';
@@ -77,12 +77,25 @@ export class HomePage {
   question: string = "";
   chapterTilte='light';
   userType = '';
+  supportedUserTypeConfig: Array<any> = []
+  selectedUserType: any;
 
   constructor(
     private router: Router,
     private barcodeScanner: BarcodeScanner,
-    private http: HttpClient,
-  ) {}
+    private http: HttpClient
+  ) {
+    this.supportedUserTypeConfig = [ {
+      name: "Teacher",
+      code: 'teacher',
+      image: 'ic_teacher.svg'
+    },
+    {
+      name: "Student",
+      code: 'student',
+      image: 'ic_student.svg'
+    }]
+  }
 
   URLToObject(url: any) {
     let request: any = {};
@@ -110,7 +123,7 @@ export class HomePage {
               board: data.result.content[0].organisation,
               medium: data.result.content[0].medium
             }
-            this.selectedUser(this.userType, contentDEtails) 
+            this.selectedUser(this.userType, '', contentDEtails) 
           }
           // const requestParam: NavigationExtras = {
           //   state: {
@@ -130,15 +143,16 @@ export class HomePage {
     }
   }
 
-  async selectedUser(userType: string, contentDetails?: any) {
+  async selectedUser(userType: string, code: string, contentDetails?: any) {
+    this.selectedUserType = code;
     this.userType = userType;
     var contents: Array<any> = [];
-    if (userType === 'student') {
+    if (userType === 'Student') {
       contents = [
         {type:"Quiz", selected: false, question: 'As a student, give me 5 MCQ with correct answer for this ' + this.chapterTilte},
         {type:"Summary", selected: false, question: 'As a student, give me an easy to understand summary of this ' + this.chapterTilte},
         {type:"Important Words", selected: false, question: 'As a student, tell me important words with their meanings about this chapter that I should learn'}];
-    } else if (userType === 'teacher') {
+    } else if (userType === 'Teacher') {
       contents = [
         {type:"Quiz", selected: false, question: 'Generate 5 MCQ for this ' + this.chapterTilte},
         {type:"Summary", selected: false, question: 'Summarize ' + this.chapterTilte},

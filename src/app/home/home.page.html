@@ -1,33 +1,23 @@
 <ion-header>
   <ion-toolbar class="toolbar">
     <ion-title>
-      Learner App
+      Ed Saathi
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div id="container">
-  </div>
-    <div class="container">
-      <div class="card" (click)="selectedUser('teacher')">
-          <div class="card-container" role="button" >
-              <div class="check-icon">
-                  <img class="icon-check" alt="" src="assets/ic_teacher.svg"/>
-              </div>
-              <h4 class="card-title sb__ellipsis sb__ellipsis--two">Teacher</h4>
-          </div>
-      </div>
-  
-    <div class="card" (click)="selectedUser('student')">
-        <div class="card-container" role="button" >
-            <div class="check-icon">
-                <img class="icon-check" alt="" src="assets/ic_student.svg"/>
-            </div>
-            <h4 class="card-title sb__ellipsis sb__ellipsis--two">Student</h4>
+  <div class="container">
+    <div class="card" *ngFor="let userTypeConfig of supportedUserTypeConfig;">
+      <div class="card-container" role="button" (click)="selectedUser(userTypeConfig?.name, userTypeConfig?.code)" [class.selected]="selectedUserType === userTypeConfig?.code">
+        <div class="check-icon">
+            <img class="icon-check" alt="" [class.selected]="selectedUserType === userTypeConfig?.code" src="assets/imgs/ic_check.svg"/>
         </div>
+        <img class="thumbnail" alt="" src="assets/{{ userTypeConfig?.image }}" [ngClass]="{'coming-soon-image': !userTypeConfig?.isActive}" />
+        <h4 class="card-title sb__ellipsis sb__ellipsis--two">{{ userTypeConfig?.name }}</h4>
+      </div>
     </div>
-</div>  
+  </div>
 
 </ion-content>
 
