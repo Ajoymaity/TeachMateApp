@@ -25,6 +25,7 @@ export class ContentDetailsPage implements OnInit {
   selectedChip: any;
   disableSelect: boolean = true;
   details: any;
+  userType: string = '';
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -38,6 +39,7 @@ export class ContentDetailsPage implements OnInit {
       this.chapterName = data['chapter'] || '';
       this.qUrl = data['query'].split(' ').join('%20');
       this.details = data['details']
+      this.userType = data['role']
     }
   }
 
@@ -81,14 +83,14 @@ export class ContentDetailsPage implements OnInit {
       console.log('res ', res);
       this.messages[this.messages.length-1].text = res && res.answer ? res['answer'] : "No Response";
       this.disableSelect = false;
-      if(this.selectedChip == "Teacher Aid") {
+      if(this.selectedChip == "Teacher Aid" && this.userType !== 'Student') {
         let msg = {text: '', from: Creator.Bot, innerHtml: true}
         this.messages.push(msg);
         this.getContentDetails().subscribe((data) => {
           console.log('teacherrrrrrrr', data)
-          let output = `<div style="width: 100%;> <p>Here are courses which can help you learn more about this chapter:<p>`;
+          let output = `<div style="width: 100%; color: black"> <p>Here are courses which can help you learn more about this chapter:<p>`;
           data.result.content.forEach(item => {
-            output += `<p>${item.name}. <a href='https://diksha.gov.in/explore-course/course/${item.identifier}'>https://diksha.gov.in/explore-course/course/${item.identifier}</a></p>`
+            output += `<p style="color: black">${item.name}. <a href='https://diksha.gov.in/explore-course/course/${item.identifier}'>https://diksha.gov.in/explore-course/course/${item.identifier}</a></p>`
           });
           output +=`</div>`
           console.log('output', output);
@@ -126,11 +128,11 @@ export class ContentDetailsPage implements OnInit {
     })
   }
 
-  getContentDetails() {
+  getContentDetails(primaryCategories: Array<string>) {
     return this.http.post<Response>(environment.teacherBaseUrl, {
         "request": {
           "filters": {
-            "primaryCategory": "Course"
+            "primaryCategory": primaryCategories
 
           },
           "limit": 10,
