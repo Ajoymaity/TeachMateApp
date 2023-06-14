@@ -3,69 +3,7 @@ import { Component, NgZone } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 import { environment } from 'src/environments/environment';
-
-export interface Response {
-  id:           string;
-  ver:          string;
-  ts:           Date;
-  params:       Params;
-  responseCode: string;
-  result:       Result;
-}
-
-export interface Params {
-  resmsgid: string;
-  msgid:    string;
-  status:   string;
-  err:      null;
-  errmsg:   null;
-}
-
-export interface Result {
-  count:   number;
-  content: Content[];
-  facets:  Facet[];
-}
-
-export interface Content {
-  trackable:       Trackable;
-  identifier:      string;
-  subject:         string[];
-  channel:         string;
-  organisation:    string[];
-  mimeType:        string;
-  medium:          string[];
-  pkgVersion:      number;
-  objectType:      string;
-  gradeLevel:      string[];
-  appIcon:         string;
-  primaryCategory: string;
-  name:            string;
-  contentType:     string;
-  board:           string;
-  resourceType:    string;
-  orgDetails:      OrgDetails;
-}
-
-export interface OrgDetails {
-  email:   null;
-  orgName: string;
-}
-
-export interface Trackable {
-  enabled:   string;
-  autoBatch: string;
-}
-
-export interface Facet {
-  values: Value[];
-  name:   string;
-}
-
-export interface Value {
-  name:  string;
-  count: number;
-}
+import { Response } from '../response';
 
 @Component({
   selector: 'app-home',
@@ -112,7 +50,7 @@ export class HomePage {
     if (this.userType) {
       this.barcodeScanner.scan().then(async (barcodeData) => {
         console.log('Barcode data', barcodeData);
-        const data = (await this.getDialCodeInfo(barcodeData.text)).subscribe(async (data) => {
+        const data = this.getDialCodeInfo(barcodeData.text).subscribe(async (data) => {
           console.log('///////', data)
 
           if (data && data.result && data.result.content) {
@@ -166,8 +104,8 @@ export class HomePage {
     await this.router.navigate(['./chapter-details-option'], requestParam);
   }
 
-  async getDialCodeInfo(dialcode: string) {
-    return await this.http.post<Response>(environment.qrBaseUrl, {
+  getDialCodeInfo(dialcode: string) {
+    return this.http.post<Response>(environment.qrBaseUrl, {
       "request": {
         "filters": {
           "primaryCategory": [
