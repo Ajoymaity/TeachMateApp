@@ -21,7 +21,7 @@
 .float-right {
     float: right;
     display: flex;
-
+    width: 80%;
     ion-chip {
         border-bottom-right-radius: 0;
     }
@@ -31,4 +31,8 @@ img {
   max-width: 12% !important;
   height: 2.5rem;
   padding: 7px 0;
+}
+
+ion-chip{
+    background-color: white;
 }

@@ -46,7 +46,9 @@ export class ContentDetailsPage implements OnInit {
         selectedContent = a.type
     }});
     this.selectedChip = selectedContent;
-    let url = `${environment.baseUrl}=${this.qUrl}`;
+    var uuid_number = this.details.gradeLevel.toLowerCase().includes('class 8') ? '4c67c7f4-0919-11ee-9081-0242ac110002' : '8800c6da-0919-11ee-9081-0242ac110002';
+    let url = `${environment.questionGptUrl}?uuid_number=${uuid_number}&query_string=${this.qUrl}`;
+    // let url = `${environment.questionGptUrl}=${this.qUrl}`;
     console.log('url ', url);
     this.getData(url);
   }
@@ -62,7 +64,9 @@ export class ContentDetailsPage implements OnInit {
         console.log(cont,  'cont');
       }
     });
-    let url = `${environment.questionGptUrl}=${quetionUrl}`;
+    var uuid_number = this.details.gradeLevel.toLowerCase().includes('class 8') ? '4c67c7f4-0919-11ee-9081-0242ac110002' : '8800c6da-0919-11ee-9081-0242ac110002';
+    let url = `${environment.questionGptUrl}?uuid_number=${uuid_number}&query_string=${quetionUrl}`;
+   // let url = `${environment.questionGptUrl}=${quetionUrl}`;
     console.log(url,  'url');
     this.getData(url);
   }
@@ -70,9 +74,9 @@ export class ContentDetailsPage implements OnInit {
   getData(url: any) {
     let msg = {text: '', from: Creator.Bot}
     this.messages.push(msg);
-    this.http.get(url, {responseType: 'text'}).subscribe((res) => {
+    this.http.get(url, {responseType: 'json'}).subscribe((res: any) => {
       console.log('res ', res);
-      this.messages[this.messages.length-1].text = res ? res : "No Response";
+      this.messages[this.messages.length-1].text = res && res.answer ? res['answer'] : "No Response";
       this.disableSelect = false
     })
   }
@@ -83,15 +87,16 @@ export class ContentDetailsPage implements OnInit {
     msg = {text: this.question, from: Creator.Me};
     this.messages.push(msg);
     this.disableSelect = true;
-    this.question = this.question.split(' ').join('%20');
-    var uuid_number = this.details.gradeLevel.toLowerCase().include('class 8') ? '4c67c7f4-0919-11ee-9081-0242ac110002' : '8800c6da-0919-11ee-9081-0242ac110002';
+  //  this.question = this.question.split(' ').join('');
+    console.log('this.details.gradeLevel',  this.details.gradeLevel)
+    var uuid_number = this.details.gradeLevel.toLowerCase().includes('class 8') ? '4c67c7f4-0919-11ee-9081-0242ac110002' : '8800c6da-0919-11ee-9081-0242ac110002';
     let url = `${environment.questionGptUrl}?uuid_number=${uuid_number}&query_string=${this.question}`;
     console.log('url is', url)
     this.question = "";
     msg = {text: "", from: Creator.Bot}
     this.messages.push(msg);
     console.log('before get')
-    this.http.get(url, {responseType: 'text'}).subscribe((res: any) => {
+    this.http.get(url, {responseType: 'json'}).subscribe((res: any) => {
       console.log('.....................', res.answer)
       if (res) {
         this.messages[this.messages.length-1].text = res && res.answer ? res['answer'] : "No Response";
