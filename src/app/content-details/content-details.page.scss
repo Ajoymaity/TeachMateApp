@@ -1,8 +1,3 @@
-.selecetd {
-    background-color: #185a9d;
-    color: white !important;
-}
-
 .text-style{
     white-space: pre-wrap !important
 }
@@ -37,3 +32,34 @@ img {
 ion-chip{
     background-color: white;
 }
+
+.selecetd.quizChip {
+    background-color: #024f9d;
+    color: white !important;
+}
+
+.quizChip {
+    border: 2px solid #024f9d;
+    color: #024f9d !important;
+}
+
+.selecetd.summary {
+    background-color: #008840;
+    color: white !important;
+}
+
+.summary {
+    border: 2px solid #008840;
+    color: #008840 !important;
+}
+
+.selecetd.impWords, .selecetd.aidchip {
+    background-color: #e55a28;
+    color: white !important;
+}
+
+.impWords, .aidchip {
+    border: 2px solid #e55a28;
+    color: #e55a28 !important;
+}
+

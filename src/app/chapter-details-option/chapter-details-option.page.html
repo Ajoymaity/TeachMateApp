@@ -13,8 +13,8 @@
     <h4 *ngIf="query.role == 'Teacher'">What do you want to teach? </h4>
   </div>
   <div class="container">
-    <div class="card" *ngFor="let content of contents" (click)="selectedContent = content">
-      <label class="selection" [for]="content" [class.selected]="selectedContent === content">
+    <div class="card" *ngFor="let content of contents; let i = index" (click)="selectedContent = content">
+      <label class="selection{{i}}" [for]="content" [class.selected]="selectedContent === content">
         <span class="label-text" style="color: black;">
           {{content.type}}
         </span>

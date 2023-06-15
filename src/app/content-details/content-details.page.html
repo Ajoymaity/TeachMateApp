@@ -10,7 +10,8 @@
 <ion-content id="content">
   <div style="display: flex; margin-top: 10px; overflow-x:auto; white-space: nowrap;">
     <div *ngFor="let chip of contents">
-      <ion-chip [disabled]="disableSelect" [ngClass]="{'selecetd': chip.type == selectedChip}" (click)="navigateToContentDetails(chip)" [ngStyle]="{'background-color': chip.type == selectedChip ? chip?.colorSel : chip?.color}">
+      <ion-chip [disabled]="disableSelect" (click)="navigateToContentDetails(chip)" 
+      [ngClass]="{'selecetd': chip.type == selectedChip, 'quizChip': chip.type == 'Quiz', 'summary': chip.type == 'Summary', 'impWords': chip.type == 'Important Words', 'aidchip': chip.type == 'Teacher Aid'}">
         <ion-icon name="{{chip?.name}}" color="white"></ion-icon>
         <ion-label>{{chip.type}}</ion-label>
       </ion-chip>

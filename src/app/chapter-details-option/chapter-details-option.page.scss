@@ -16,8 +16,14 @@
     outline: none;
     border-radius: 1rem;
   }
-  .selected {
-    border:3px solid #5d90c4;
+  .selection0.selected {
+    border:3px solid #024f9d;
+  }
+  .selection1.selected {
+    border:3px solid #008840;
+  }
+  .selection2.selected {
+    border:3px solid #e55a28;
   }
   .selected-card {
     .selection {
@@ -30,7 +36,6 @@
   
   .card label {
     position: relative;
-    box-shadow: 0 20px 40px -10px lightblue;
     background-color: white;
     display: inline-block;
     width: 100%;
@@ -38,7 +43,19 @@
     border-radius: 16px;
     text-align: center;
   }
+
+  .card .selection0 {
+    box-shadow: 0 20px 40px -10px lightblue;
+  }
+
+  .card .selection1 {
+    box-shadow: 0 20px 40px -10px palegreen;
+  }
   
+  .card .selection2 {
+    box-shadow: 0 20px 40px -10px peachpuff;
+  }
+
   .card span {
     position: absolute;
     top: 50%;
