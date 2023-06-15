@@ -16,7 +16,7 @@
       </ion-chip>
     </div>
   </div>
-  <div id="content" style="overflow-y: auto; margin-top: 12%;">
+  <div id="content" style="overflow-y: auto; margin-top: 50px;">
     <div *ngFor="let msg of messages; let i = index;">
       <div [ngClass]="{'float-right': msg.from === 0, 'float-left': msg.from === 1}">
         <img class="img" *ngIf="msg.from === 1" alt="bot" src="assets/bot.jpeg"/>
