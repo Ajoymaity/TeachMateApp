@@ -7,8 +7,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content id="content">
-  <div style="display: flex; margin-top: 10px; overflow-x:auto; white-space: nowrap;">
+<ion-content>
+  <div style="display: flex; padding: 5px; overflow-x:auto; white-space: nowrap; position: fixed; z-index: 1; background: #E9E8D9; width: 100%;">
     <div *ngFor="let chip of contents; let ind = index;">
       <ion-chip [disabled]="disableSelect" (click)="navigateToContentDetails(chip)" class="chipContent{{ind}}" [ngClass]="{'selecetd': chip.type == selectedChip}">
         <ion-icon name="{{chip?.name}}" color="white"></ion-icon>
@@ -16,15 +16,17 @@
       </ion-chip>
     </div>
   </div>
-  <div *ngFor="let msg of messages; let i = index;">
-    <div [ngClass]="{'float-right': msg.from === 0, 'float-left': msg.from === 1}">
-      <img class="img" *ngIf="msg.from === 1" alt="bot" src="assets/bot.jpeg"/>
-      <ion-chip style="height: auto;" *ngIf="!msg.innerHtml">
-        <ion-label class="text-style" style="color: black;">{{msg.text}}</ion-label>
-        <ion-label class="text-style" *ngIf="msg.from === 1 && msg.text == ''" style="color: black;">crafting ....</ion-label>
-      </ion-chip>
-      <ion-chip id="chip{{i}}" style="height: auto;" *ngIf="msg.innerHtml"></ion-chip>
-      <ion-icon *ngIf="msg.from === 0" name="person-circle-outline" style="width: 2rem !important; height: 1.5rem !important; padding: 7px 0; color: black;"></ion-icon>
+  <div id="content" style="overflow-y: auto; margin-top: 12%;">
+    <div *ngFor="let msg of messages; let i = index;">
+      <div [ngClass]="{'float-right': msg.from === 0, 'float-left': msg.from === 1}">
+        <img class="img" *ngIf="msg.from === 1" alt="bot" src="assets/bot.jpeg"/>
+        <ion-chip style="height: auto;" *ngIf="!msg.innerHtml">
+          <ion-label class="text-style" style="color: black;">{{msg.text}}</ion-label>
+          <ion-label class="text-style" *ngIf="msg.from === 1 && msg.text == ''" style="color: black;">crafting ....</ion-label>
+        </ion-chip>
+        <ion-chip id="chip{{i}}" style="height: auto;" *ngIf="msg.innerHtml"></ion-chip>
+        <ion-icon *ngIf="msg.from === 0" name="person-circle-outline" style="width: 2rem !important; height: 1.5rem !important; padding: 7px 0; color: black;"></ion-icon>
+      </div>
     </div>
   </div>
 </ion-content>

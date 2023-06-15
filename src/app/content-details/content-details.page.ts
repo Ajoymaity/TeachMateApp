@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { Response } from '../response';
+import { IonContent } from '@ionic/angular';
 enum Creator {
   Me = 0,
   Bot = 1,
@@ -25,6 +26,7 @@ export class ContentDetailsPage implements OnInit {
   disableSelect: boolean = true;
   details: any;
   userType: string = '';
+  @ViewChild(IonContent, {static: true}) private content: any;
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -80,6 +82,7 @@ export class ContentDetailsPage implements OnInit {
     this.messages.push(msg);
     this.http.get(url, { responseType: 'json' }).subscribe((res: any) => {
       console.log('res ', res);
+      this.content.scrollToBottom(500);
       this.messages[this.messages.length-1].text = res && res.answer ? res['answer'] : "No Response";
       this.disableSelect = false;
       let arr: Array<string> = [];
@@ -99,6 +102,7 @@ export class ContentDetailsPage implements OnInit {
       this.messages.push(msg);
       this.getContentDetails(arr).subscribe((data) => {
         console.log('teacherrrrrrrr', data)
+        this.content.scrollToBottom(500);
         let output = `<div style="width: 100%; color: black"> <p>Here are courses which can help you learn more about this chapter:<p>`;
         data.result.content.forEach(item => {
           output += `<p style="color: black"><a href='https://diksha.gov.in/explore-course/course/${item.identifier}'>${item.name}</a></p>`
@@ -117,7 +121,8 @@ export class ContentDetailsPage implements OnInit {
 
   askQuestion() {
     let msg;
-    window.scrollTo(0, document.body.scrollHeight);
+    console.log('height', document.body.scrollHeight);
+    this.content.scrollToBottom(300);
     msg = { text: this.question, from: Creator.Me, innerHtml: false };
     this.messages.push(msg);
     this.disableSelect = true;
@@ -135,6 +140,7 @@ export class ContentDetailsPage implements OnInit {
       if (res) {
         this.messages[this.messages.length - 1].text = res && res.answer ? res['answer'] : "No Response";
         this.disableSelect = false;
+        this.content.scrollToBottom(500);
       }
     })
   }
