@@ -50,7 +50,15 @@ export class HomePage {
     if (this.userType) {
       this.barcodeScanner.scan().then(async (barcodeData) => {
         console.log('Barcode data', barcodeData);
-        const data = this.getDialCodeInfo(barcodeData.text).subscribe(async (data) => {
+        var text: any = barcodeData.text;
+        if (barcodeData.text.includes('/')) {
+            var rgx = '(\/dial\/(?<sunbird>[a-zA-Z0-9]+)|(\/QR\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))';
+  
+            const execArray = (new RegExp(rgx)).exec(barcodeData.text);
+            text = execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])]
+        }
+        console.log('texxxt', text)
+        const data = this.getDialCodeInfo(text).subscribe(async (data) => {
           console.log('///////', data)
 
           if (data && data.result && data.result.content) {
