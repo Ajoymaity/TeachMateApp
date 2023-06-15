@@ -105,7 +105,8 @@ export class ContentDetailsPage implements OnInit {
         });
         output +=`</div>`
         console.log('output', output);
-        let ele = document.getElementById('chip');
+        let id = 'chip'+ (this.messages.length - 1)
+        let ele = document.getElementById(id);
         console.log(ele, 'ele');
         if (ele) {
           ele.innerHTML = output;
