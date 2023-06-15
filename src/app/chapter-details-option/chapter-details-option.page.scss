@@ -46,14 +46,26 @@
 
   .card .selection0 {
     box-shadow: 0 20px 40px -10px lightblue;
+    .label-text {
+      color: #024f9d !important;
+      font-weight: bold;
+    }
   }
 
   .card .selection1 {
     box-shadow: 0 20px 40px -10px palegreen;
+    .label-text {
+      color: #008840 !important;
+      font-weight: bold;
+    }
   }
   
   .card .selection2 {
     box-shadow: 0 20px 40px -10px peachpuff;
+    .label-text {
+      color: #e55a28 !important;
+      font-weight: bold;
+    }
   }
 
   .card span {
