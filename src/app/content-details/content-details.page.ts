@@ -120,29 +120,31 @@ export class ContentDetailsPage implements OnInit {
   }
 
   askQuestion() {
-    let msg;
-    console.log('height', document.body.scrollHeight);
-    this.content.scrollToBottom(300);
-    msg = { text: this.question, from: Creator.Me, innerHtml: false };
-    this.messages.push(msg);
-    this.disableSelect = true;
-  //  this.question = this.question.split(' ').join('');
-    console.log('this.details.gradeLevel',  this.details.gradeLevel)
-    var uuid_number = this.details?.gradeLevel?.toLowerCase().includes('class 8') ? '4c67c7f4-0919-11ee-9081-0242ac110002' : '8800c6da-0919-11ee-9081-0242ac110002';
-    let url = `${environment.questionGptUrl}?uuid_number=${uuid_number}&query_string=${this.question}`;
-    console.log('url is', url)
-    this.question = "";
-    msg = { text: "", from: Creator.Bot, innerHtml: false }
-    this.messages.push(msg);
-    console.log('before get')
-    this.http.get(url, { responseType: 'json' }).subscribe((res: any) => {
-      console.log('.....................', res.answer)
-      if (res) {
-        this.messages[this.messages.length - 1].text = res && res.answer ? res['answer'] : "No Response";
-        this.disableSelect = false;
-        this.content.scrollToBottom(500);
-      }
-    })
+    if (this.question && this.question.trim()) {
+      let msg;
+      console.log('height', document.body.scrollHeight);
+      this.content.scrollToBottom(300);
+      msg = { text: this.question, from: Creator.Me, innerHtml: false };
+      this.messages.push(msg);
+      this.disableSelect = true;
+    //  this.question = this.question.split(' ').join('');
+      console.log('this.details.gradeLevel',  this.details.gradeLevel)
+      var uuid_number = this.details?.gradeLevel?.toLowerCase().includes('class 8') ? '4c67c7f4-0919-11ee-9081-0242ac110002' : '8800c6da-0919-11ee-9081-0242ac110002';
+      let url = `${environment.questionGptUrl}?uuid_number=${uuid_number}&query_string=${this.question}`;
+      console.log('url is', url)
+      this.question = "";
+      msg = { text: "", from: Creator.Bot, innerHtml: false }
+      this.messages.push(msg);
+      console.log('before get')
+      this.http.get(url, { responseType: 'json' }).subscribe((res: any) => {
+        console.log('.....................', res.answer)
+        if (res) {
+          this.messages[this.messages.length - 1].text = res && res.answer ? res['answer'] : "No Response";
+          this.disableSelect = false;
+          this.content.scrollToBottom(500);
+        }
+      })
+    }
   }
 
   getContentDetails(primaryCategories: Array<string>) {
