@@ -1,0 +1,83 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Quiz</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-button id="open-modal" expand="block">Start Quiz</ion-button>
+  <ion-modal #modal trigger="open-modal" [initialBreakpoint]="0.6" [breakpoints]="[0, 0.6]">
+    <ng-template>
+      <ion-content *ngIf="questionViewed.length > 0 && !showScore" class="ion-padding">
+        <div *ngFor="let quest of questionViewed">
+          <ion-item lines="none">
+            <h5>{{quest.query}}</h5>
+          </ion-item>
+          <ion-item lines="none" *ngFor="let opts of quest.options;">
+            <ion-checkbox slot="start" [disabled]="opts.disabled" (click)="onSelectOption(opts.option)"></ion-checkbox>
+            <ion-label>{{opts.option}}</ion-label>
+          </ion-item>
+          <ion-item lines="none" style="float: right;">
+            <ion-button *ngIf="!lastQuestion" (click)="nextQuestion(quest)">Next</ion-button>
+            <ion-button *ngIf="lastQuestion" (click)="calculateScore()">Done</ion-button>
+          </ion-item>
+        </div>
+      </ion-content>
+      <ion-content *ngIf="showScore" class="ion-padding">
+        <ion-item>
+          <h3>Total Score</h3>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>TotalQuestions:  {{totalScore}}</ion-label>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>Score:  {{score}}</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>Total: {{score}}/{{totalScore}}</ion-label>
+          <ion-label>Average: {{(score/totalScore)*100}}%</ion-label>
+        </ion-item>
+        <ion-item lines="none" style="float: right;">
+          <ion-button (click)="cancel()">ok</ion-button>
+        </ion-item>
+      </ion-content>
+    </ng-template>
+  </ion-modal><ion-button id="open-modal" expand="block">Start Quiz</ion-button>
+  <ion-modal #modal trigger="open-modal" [initialBreakpoint]="0.6" [breakpoints]="[0, 0.6]">
+    <ng-template>
+      <ion-content *ngIf="questionViewed.length > 0 && !showScore" class="ion-padding">
+        <div *ngFor="let quest of questionViewed">
+          <ion-item lines="none">
+            <h5>{{quest.query}}</h5>
+          </ion-item>
+          <ion-item lines="none" *ngFor="let opts of quest.options;">
+            <ion-checkbox slot="start" [disabled]="opts.disabled" (click)="onSelectOption(opts.option)"></ion-checkbox>
+            <ion-label>{{opts.option}}</ion-label>
+          </ion-item>
+          <ion-item lines="none" style="float: right;">
+            <ion-button *ngIf="!lastQuestion" (click)="nextQuestion(quest)">Next</ion-button>
+            <ion-button *ngIf="lastQuestion" (click)="calculateScore()">Done</ion-button>
+          </ion-item>
+        </div>
+      </ion-content>
+      <ion-content *ngIf="showScore" class="ion-padding">
+        <ion-item>
+          <h3>Total Score</h3>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>TotalQuestions:  {{totalScore}}</ion-label>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>Score:  {{score}}</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>Total: {{score}}/{{totalScore}}</ion-label>
+          <ion-label>Average: {{(score/totalScore)*100}}%</ion-label>
+        </ion-item>
+        <ion-item lines="none" style="float: right;">
+          <ion-button (click)="cancel()">ok</ion-button>
+        </ion-item>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
