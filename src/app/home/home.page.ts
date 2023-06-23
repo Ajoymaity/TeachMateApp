@@ -4,6 +4,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
 import { environment } from 'src/environments/environment';
 import { Response } from '../response';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -11,30 +12,32 @@ import { Response } from '../response';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-
+  appName: string = "Ed Saathi"
   question: string = "";
+  appLogo: string =  "";
   chapterTilte='12-SOME NATURAL PHENOMENA';
   userType = '';
   supportedUserTypeConfig: Array<any> = []
-  selectedUserType: any;
-
+  selectedUserType: any = "";
+  isMenuOpen: boolean = true;
   constructor(
     private router: Router,
     private barcodeScanner: BarcodeScanner,
-    private http: HttpClient
+    private http: HttpClient,
+    public menuCtrl: MenuController,
   ) {
     this.supportedUserTypeConfig = [ {
       name: "Teacher",
       code: 'teacher',
       image: 'ic_teacher.svg'
     },
-    // {
-    //   name: "Student",
-    //   code: 'student',
-    //   image: 'ic_student.svg'
-    // }
+    {
+      name: "Student",
+      code: 'student',
+      image: 'ic_student.svg'
+    }
    ]
-   this.selectedUserType = this.supportedUserTypeConfig[0].code;
+  //  this.selectedUserType = this.supportedUserTypeConfig[0].code;
    this.userType = this.supportedUserTypeConfig[0].name;
   }
 
@@ -109,10 +112,12 @@ export class HomePage {
         {type:"Teacher Aid", selected: false, question: 'how to teach ' + this.chapterTilte + ' with activities', name: "book", color: 'warning'}];
     }
   
-    const requestParam: NavigationExtras = {
-      state: {role: userType, contents, isQrCode: false, chapter: this.chapterTilte, details: contentDetails}
-    }
-    await this.router.navigate(['./chapter-details-option'], requestParam);
+    // const requestParam: NavigationExtras = {
+    //   state: {role: userType, contents, isQrCode: false, chapter: this.chapterTilte, details: contentDetails}
+    // }
+    // await this.router.navigate(['./chapter-details-option'], requestParam);
+    let requestParam = {queryParams: {query: "Generate 5 MCQ for", chapter: this.chapterTilte, content: contents, details: contentDetails}}
+    await this.router.navigate(['./content-details'], requestParam);
   }
 
   getDialCodeInfo(dialcode: string) {
@@ -183,4 +188,16 @@ export class HomePage {
     });
   }
 
+  async toggleMenu() {
+    await this.menuCtrl.toggle();
+    await this.menuCtrl.isEnabled();
+  }
+
+  emitSideMenuItemEvent(e: any, type: string) {
+    console.log('event ', e, type);
+    this.selectedUserType = type;
+    this.menuCtrl.close().then((data) => {
+    }).catch((e) => {
+    })
+  }
 }

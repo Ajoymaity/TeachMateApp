@@ -8,15 +8,47 @@
 </ion-header>
 
 <ion-content>
-  <div style="display: flex; padding: 5px; overflow-x:auto; white-space: nowrap; position: fixed; z-index: 1; background: #E9E8D9; width: 100%;">
+  <!-- <div style="display: flex; padding: 5px; overflow-x:auto; white-space: nowrap; position: fixed; z-index: 1; background: #E9E8D9; width: 100%;">
     <div *ngFor="let chip of contents; let ind = index;">
       <ion-chip [disabled]="disableSelect" (click)="navigateToContentDetails(chip)" class="chipContent{{ind}}" [ngClass]="{'selecetd': chip.type == selectedChip}">
         <ion-icon name="{{chip?.name}}" color="white"></ion-icon>
         <ion-label>{{chip.type}}</ion-label>
       </ion-chip>
     </div>
-  </div>
-  <div id="content" style="overflow-y: auto; margin-top: 50px;">
+  </div> -->
+  <div id="content" style="overflow-y: auto;">
+    <div>
+      <div class="float-left">
+        <img class="img" alt="bot" src="assets/bot.jpeg"/>
+        <ion-chip style="height: auto;">
+          <ion-label class="text-style" style="color: black;">
+            Hello, I'm TeachMate,
+            <br> your assistant to help you teach <b>{{chapterName}}</b>.  
+            <br>TeachMate provides you lesson plans, teacher activities, assessments and assignments for your class. 
+            <br>To proceed Choose a Language.
+          </ion-label>
+        </ion-chip>
+      </div>
+      <div class="float-left">
+        <img class="img" alt="bot" src="assets/bot.jpeg"/>
+        <ion-chip style="height: auto; display: flex; flex-direction: column;">
+          <ion-label class="text-style" style="color: black;">
+            <b>Choose a Language</b>
+          </ion-label>
+          <ion-list style="width: 100%;">
+            <ion-item *ngFor="let lang of languages" style="border-radius: 20px; margin: 3px 0;" (click)="lang.selected = true; languageSelected(lang)">
+              <ion-label style="text-align: center;">{{lang.name}}</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-chip>
+      </div>
+      <div *ngIf="selectedLanguage" class="float-left">
+        <img class="img" alt="bot" src="assets/bot.jpeg"/>
+        <ion-chip style="height: auto;">
+          <ion-label class="text-style" style="color: black;">You have chosen <b>{{selectedLanguage}}</b>. Enter your query.</ion-label>
+        </ion-chip>
+      </div>
+    </div>
     <div *ngFor="let msg of messages; let i = index;">
       <div [ngClass]="{'float-right': msg.from === 0, 'float-left': msg.from === 1}">
         <img class="img" *ngIf="msg.from === 1" alt="bot" src="assets/bot.jpeg"/>
@@ -25,17 +57,72 @@
           <ion-label class="text-style" *ngIf="msg.from === 1 && msg.text == ''" style="color: black;">crafting ....</ion-label>
         </ion-chip>
         <ion-chip id="chip{{i}}" style="height: auto;" *ngIf="msg.innerHtml"></ion-chip>
-        <ion-icon *ngIf="msg.from === 0" name="person-circle-outline" style="width: 2rem !important; height: 1.5rem !important; padding: 7px 0; color: black;"></ion-icon>
+        <ion-icon *ngIf="msg.from === 0" name="person-circle-outline" style="width: 2rem !important; height: 2rem !important; padding: 7px 0; color: black;"></ion-icon>
       </div>
     </div>
   </div>
 </ion-content>
 
 <ion-footer>
-  <ion-item [disabled]="disableSelect">
-    <ion-input style="background-color: white; color: black;" placeholder="Ask your question" [(ngModel)]="question" (keyup.enter)="askQuestion()"></ion-input>
-    <ion-button class="button button-clear" style="--box-shadow: none;" (click)="askQuestion()">
-      <ion-icon name="send" style="width: 2rem; height: 1.5rem; padding: 7px 0;"></ion-icon>
-    </ion-button>
-  </ion-item>
+  <div>
+    <ion-chip [disabled]="disableSelect" *ngFor="let option of extraOptions" (click)="selectedOptions(option)" id="{{option?.id}}">
+      <ion-label *ngIf="option.label">{{option.label}}</ion-label>
+      <ion-icon class="{{option.icon}}" name="{{option.icon}}"></ion-icon>
+    </ion-chip>
+  </div>
+  <ion-popover #popover trigger="trigger-button">
+    <ng-template>
+      <ion-list>
+        <ion-item *ngFor="let action of quickActions" (click)="handleAction(action)">
+          <ion-icon name="{{action.icon}}"></ion-icon>
+          <ion-label>{{action.name}}</ion-label>
+        </ion-item>
+      </ion-list>
+    </ng-template>
+  </ion-popover>
+  <div>
+    <ion-item *ngIf="recording" style="width: 100%;">
+      <ion-label id="timer"></ion-label>
+      <span>----------------------</span>
+    </ion-item>
+  </div>
+  <div>
+    <ion-item *ngIf="!recording" style="width: 100%;" [disabled]="disableSelect">
+      <ion-input style="background-color: white; color: black; border-radius: 10px;" placeholder="Ask your question" [(ngModel)]="question" (keyup.enter)="askQuestion()"></ion-input>
+      <ion-icon name="send" style="width: 2rem; height: 1.5rem; padding: 7px 0; color: #185a9d;" (click)="askQuestion()"></ion-icon>
+    </ion-item>
+    <ion-item *ngIf="!recording" [disabled]="disableSelect">
+      <ion-icon name="mic" id="hint" style="width: 2rem; height: 1.5rem; padding: 7px 0; color: #185a9d;" (click)="recordSpeech($event)"></ion-icon>
+    </ion-item>
+    <ion-popover #popoverhint trigger="hint" show-backdrop="false" style="--background: transparent;">
+      <ng-template>
+        <ion-item style="--background: #185a9d; color: white; opacity: 0.85;">
+          <ion-label style="font-size: 12px;">Hold to record, release to send.</ion-label>
+        </ion-item>
+      </ng-template>
+    </ion-popover>
+    <div *ngIf="recording" style="width: 100%;">
+      <ion-item style="width: 100%;">
+        <ion-icon slot="start" name="trash" (click)="deleteRecording()"></ion-icon>
+      </ion-item>
+      <ion-item style="width: 100%;">
+        <ion-icon *ngIf="!pause" name="pause-circle-outline" style="color:red; padding-left: 50px;" (click)="pauseRecording()"></ion-icon>
+        <ion-icon *ngIf="pause" name="play-circle-outline" style="color:red; padding-left: 50px;" (click)="resumeRecording()"></ion-icon>
+      </ion-item>  
+      <ion-item style="width: 100%;">
+        <ion-icon slot="end" name="send" style="color: #185a9d;" (click)="stopRecording()"></ion-icon>
+      </ion-item>
+    </div>
+    <!-- <ion-item>
+      <ion-icon name="mic" id="hint" style="width: 2rem; height: 1.5rem; padding: 7px 0; color: #185a9d;" (click)="recordSpeech($event)"></ion-icon>
+    </ion-item> -->
+    <!-- <ion-popover #popoverhint trigger="hint" show-backdrop="false" style="--background: transparent;">
+      <ng-template>
+        <ion-item style="--background: #185a9d; color: white; opacity: 0.85;">
+          <ion-label style="font-size: 12px;">Hold to record, release to send.</ion-label> -->
+          <!-- <ion-icon name="close-circle" style="color: white;" (click)="closeHintPopover($event)"></ion-icon> -->
+        <!-- </ion-item>
+      </ng-template>
+    </ion-popover> -->
+  </div>
 </ion-footer>
