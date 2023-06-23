@@ -63,3 +63,44 @@ ion-chip{
     color: #e55a28 !important;
 }
 
+ion-footer {
+    div {
+        display: flex;
+        justify-content: center;
+    }
+    ion-chip {
+        border: 1px solid black;
+        ion-icon {
+            margin: 0;
+        }
+
+        .bulb {
+            color: #f3e005
+        }
+
+        .ear {
+            color: orange;
+        }
+
+        .chevron-up,.chevron-back,.chevron-forward {
+            color: black;
+        }
+    }
+}
+
+ion-popover{
+    --width: auto;
+    ion-list {
+        padding: 0;
+        width: auto;
+        border-radius: 20px;
+
+        ion-label {
+            padding-left: 10px;
+        }
+    }
+}
+
+.item-disabled {
+    opacity: 0.7 !important;
+}

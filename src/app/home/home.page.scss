@@ -53,6 +53,35 @@
   }
 }
 
-ion-title {
-  text-align: center;
+.side-menu-footer {
+  background-color: #E9E8D9;
+  width: 100%;
+  font-size: .875rem;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  color: #4d4d4d;
+  height: 3.5rem;
+  align-items: center;
+  display: flex;
+  border-radius: 16px 16px 0 0;
+}
+
+.tool-icon {
+  width: 1.688rem;
+  height: auto;
+  float: right;
+}
+
+.sb-menu-list {
+  background-color: white;
+  border-radius: 16px 16px 0 0;
+  ion-item {
+    color: #024f9d;
+    font-size: 1rem;
+    line-height: normal;
+    min-height: 3.5rem;
+    padding-left: 0;
+  }
 }

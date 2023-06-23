@@ -19,6 +19,10 @@ const routes: Routes = [
     path: 'content-details',
     loadChildren: () => import('./content-details/content-details.module').then( m => m.ContentDetailsPageModule)
   },
+  {
+    path: 'question-set',
+    loadChildren: () => import('./question-set/question-set.module').then( m => m.QuestionSetPageModule)
+  },
 ];
 
 @NgModule({
