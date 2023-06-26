@@ -1,7 +1,7 @@
 <ion-header>
-  <ion-toolbar class="toolbar">
+  <ion-toolbar class="toolbar {{title}}">
     <ion-buttons slot="start">
-      <ion-back-button style="color: black;"></ion-back-button>
+      <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>{{chapterName}}</ion-title>
   </ion-toolbar>
@@ -19,89 +19,100 @@
   <div id="content" style="overflow-y: auto;">
     <div>
       <div class="float-left">
-        <img class="img" alt="bot" src="assets/bot.jpeg"/>
-        <ion-chip style="height: auto;">
-          <ion-label class="text-style" style="color: black;">
-            Hello, I'm TeachMate,
-            <br> your assistant to help you teach <b>{{chapterName}}</b>.  
-            <br>TeachMate provides you lesson plans, teacher activities, assessments and assignments for your class. 
-            <br>To proceed Choose a Language.
-          </ion-label>
-        </ion-chip>
+        <img class="img" alt="bot" src="assets/teachBot.png"/>
+        <ion-card style="height: auto;">
+          <ion-card-content>
+            <ion-label class="text-style" style="color: black;">
+              Hello, I'm TeachMate,
+              <br> your assistant to help you teach <b>{{chapterName}}</b>.  
+              <br>TeachMate provides you lesson plans, teacher activities, assessments and assignments for your class. 
+              <br>To proceed Choose a Language.
+            </ion-label>
+          </ion-card-content>
+        </ion-card>
       </div>
       <div class="float-left">
-        <img class="img" alt="bot" src="assets/bot.jpeg"/>
-        <ion-chip style="height: auto; display: flex; flex-direction: column;">
-          <ion-label class="text-style" style="color: black;">
-            <b>Choose a Language</b>
-          </ion-label>
-          <ion-list style="width: 100%;">
-            <ion-item *ngFor="let lang of languages" style="border-radius: 20px; margin: 3px 0;" (click)="lang.selected = true; languageSelected(lang)">
-              <ion-label style="text-align: center;">{{lang.name}}</ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-chip>
+        <img class="img" alt="bot" src="assets/teachBot.png"/>
+        <ion-card style="height: auto; display: flex; flex-direction: column;">
+          <ion-card-content>
+            <ion-label class="text-style" style="color: black;">
+              <b>Choose a Language</b>
+            </ion-label>
+            <ion-list style="width: 100%; background: white;">
+              <ion-item lines="none" *ngFor="let lang of languages" style="border-radius: 20px; margin: 3px 0; color: black;" [ngClass]="{'selectedLang': (lang.name == selectedLanguage)}" (click)="lang.selected = true; languageSelected(lang)">
+                <ion-label style="text-align: center;">{{lang.name}}</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
       </div>
       <div *ngIf="selectedLanguage" class="float-left">
-        <img class="img" alt="bot" src="assets/bot.jpeg"/>
-        <ion-chip style="height: auto;">
-          <ion-label class="text-style" style="color: black;">You have chosen <b>{{selectedLanguage}}</b>. Enter your query.</ion-label>
-        </ion-chip>
+        <img class="img" alt="bot" src="assets/teachBot.png"/>
+        <ion-card style="height: auto;">
+          <ion-card-content>
+            <ion-label class="text-style" style="color: black;">You have chosen <b>{{selectedLanguage}}</b>. Enter your query.</ion-label>
+          </ion-card-content>
+        </ion-card>
       </div>
     </div>
     <div *ngFor="let msg of messages; let i = index;">
       <div [ngClass]="{'float-right': msg.from === 0, 'float-left': msg.from === 1}">
-        <img class="img" *ngIf="msg.from === 1" alt="bot" src="assets/bot.jpeg"/>
-        <ion-chip style="height: auto;" *ngIf="!msg.innerHtml">
-          <ion-label class="text-style" style="color: black;">{{msg.text}}</ion-label>
-          <ion-label class="text-style" *ngIf="msg.from === 1 && msg.text == ''" style="color: black;">crafting ....</ion-label>
-        </ion-chip>
-        <ion-chip id="chip{{i}}" style="height: auto;" *ngIf="msg.innerHtml"></ion-chip>
+        <img class="img" *ngIf="msg.from === 1" alt="bot" src="assets/teachBot.png"/>
+        <ion-card style="height: auto;" *ngIf="!msg.innerHtml">
+          <ion-card-content>
+            <ion-label class="text-style" style="color: black;">{{msg.text}}</ion-label>
+            <ion-label class="text-style" *ngIf="msg.from === 1 && msg.text == ''" style="color: black;">crafting ....</ion-label>
+            <ion-button *ngIf="msg.from === 1 && msg.text !== 'No Response' && msg.text !== '' && moreOption" fill="clear" (click)="nextMsgData()" style="text-align: center; width: 100%">Read more ...</ion-button>
+          </ion-card-content>
+        </ion-card>
+        <ion-card>
+          <ion-card-content id="chip{{i}}" style="height: auto;" *ngIf="msg.innerHtml"></ion-card-content>
+        </ion-card>
         <ion-icon *ngIf="msg.from === 0" name="person-circle-outline" style="width: 2rem !important; height: 2rem !important; padding: 7px 0; color: black;"></ion-icon>
       </div>
     </div>
   </div>
 </ion-content>
 
-<ion-footer>
+<ion-footer class="{{title}}">
   <div>
     <ion-chip [disabled]="disableSelect" *ngFor="let option of extraOptions" (click)="selectedOptions(option)" id="{{option?.id}}">
-      <ion-label *ngIf="option.label">{{option.label}}</ion-label>
-      <ion-icon class="{{option.icon}}" name="{{option.icon}}"></ion-icon>
+      <ion-label *ngIf="option.name && option.icon == ''" style="white-space: nowrap; color: black;">{{option.name}}</ion-label>
+      <ion-icon *ngIf="option.icon" class="{{option.icon}}" name="{{option.icon}}" style="color: black;"></ion-icon>
     </ion-chip>
   </div>
   <ion-popover #popover trigger="trigger-button">
     <ng-template>
-      <ion-list>
-        <ion-item *ngFor="let action of quickActions" (click)="handleAction(action)">
-          <ion-icon name="{{action.icon}}"></ion-icon>
+      <ion-list style="background: white">
+        <ion-item *ngFor="let action of quickActions" style="color: black;" (click)="handleAction(action)">
+          <!-- <ion-icon name="{{action.icon}}"></ion-icon> -->
           <ion-label>{{action.name}}</ion-label>
         </ion-item>
       </ion-list>
     </ng-template>
   </ion-popover>
-  <div>
+  <!-- <div>
     <ion-item *ngIf="recording" style="width: 100%;">
       <ion-label id="timer"></ion-label>
       <span>----------------------</span>
     </ion-item>
-  </div>
+  </div> -->
   <div>
-    <ion-item *ngIf="!recording" style="width: 100%;" [disabled]="disableSelect">
+    <ion-item style="width: 100%;" [disabled]="disableSelect">
       <ion-input style="background-color: white; color: black; border-radius: 10px;" placeholder="Ask your question" [(ngModel)]="question" (keyup.enter)="askQuestion()"></ion-input>
       <ion-icon name="send" style="width: 2rem; height: 1.5rem; padding: 7px 0; color: #185a9d;" (click)="askQuestion()"></ion-icon>
     </ion-item>
-    <ion-item *ngIf="!recording" [disabled]="disableSelect">
+    <!-- <ion-item *ngIf="!recording" [disabled]="disableSelect">
       <ion-icon name="mic" id="hint" style="width: 2rem; height: 1.5rem; padding: 7px 0; color: #185a9d;" (click)="recordSpeech($event)"></ion-icon>
-    </ion-item>
-    <ion-popover #popoverhint trigger="hint" show-backdrop="false" style="--background: transparent;">
+    </ion-item> -->
+    <!-- <ion-popover #popoverhint trigger="hint" show-backdrop="false" style="--background: transparent;">
       <ng-template>
         <ion-item style="--background: #185a9d; color: white; opacity: 0.85;">
           <ion-label style="font-size: 12px;">Hold to record, release to send.</ion-label>
         </ion-item>
       </ng-template>
-    </ion-popover>
-    <div *ngIf="recording" style="width: 100%;">
+    </ion-popover> -->
+    <!-- <div *ngIf="recording" style="width: 100%;">
       <ion-item style="width: 100%;">
         <ion-icon slot="start" name="trash" (click)="deleteRecording()"></ion-icon>
       </ion-item>
@@ -112,7 +123,7 @@
       <ion-item style="width: 100%;">
         <ion-icon slot="end" name="send" style="color: #185a9d;" (click)="stopRecording()"></ion-icon>
       </ion-item>
-    </div>
+    </div> -->
     <!-- <ion-item>
       <ion-icon name="mic" id="hint" style="width: 2rem; height: 1.5rem; padding: 7px 0; color: #185a9d;" (click)="recordSpeech($event)"></ion-icon>
     </ion-item> -->

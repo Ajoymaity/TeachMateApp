@@ -30,10 +30,14 @@ ion-content, ion-item {
     background: #E9E8D9;
 }
 
-.toolbar {
+.toolbar.Learnmate {
     --background: #FFD954;
     background: #FFD954;
     border-bottom-left-radius: 20px;
+    ion-back-button {
+      color: black;
+    }
+    color: black;
   ion-title {
     font-size: 16px;
     font-weight: bold;
@@ -43,13 +47,35 @@ ion-content, ion-item {
     }
   }
 }
+
+.toolbar.Teachmate {
+  --background: #00458F;
+  background: #00458F;
+  border-bottom-left-radius: 20px;
+  ion-back-button {
+    color: white;
+  }
+  color: white;
+  ion-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    ion-label {
+      color: white;
+    }
+  }
+}
   
 h4 {
   color: black;
 }
 
-ion-footer{
+ion-footer.Learnmate{
   background-color: #FFD954;
+}
+
+ion-footer.Teachmate{
+  background-color: #00458F;
 }
 
 .sign-in {

@@ -15,11 +15,12 @@ export class HomePage {
   appName: string = "Ed Saathi"
   question: string = "";
   appLogo: string =  "";
-  chapterTilte='12-SOME NATURAL PHENOMENA';
+  chapterTilte='1- CROP PRODUCTION AND MANAGEMENT';
   userType = '';
   supportedUserTypeConfig: Array<any> = []
   selectedUserType: any = "";
   isMenuOpen: boolean = true;
+  title: string = 'Teachmate';
   constructor(
     private router: Router,
     private barcodeScanner: BarcodeScanner,
@@ -29,12 +30,14 @@ export class HomePage {
     this.supportedUserTypeConfig = [ {
       name: "Teacher",
       code: 'teacher',
-      image: 'ic_teacher.svg'
+      image: 'teachBot.png',
+      selected: true
     },
     {
       name: "Student",
       code: 'student',
-      image: 'ic_student.svg'
+      image: 'ic_student.svg',
+      selected: false
     }
    ]
   //  this.selectedUserType = this.supportedUserTypeConfig[0].code;
@@ -97,7 +100,7 @@ export class HomePage {
   }
 
   async selectedUser(userType: string, code: string, contentDetails?: any) {
-    this.selectedUserType = code;
+    this.selectedUserType = userType;
     this.userType = userType;
     var contents: Array<any> = [];
     if (userType === 'Student') {
@@ -116,7 +119,7 @@ export class HomePage {
     //   state: {role: userType, contents, isQrCode: false, chapter: this.chapterTilte, details: contentDetails}
     // }
     // await this.router.navigate(['./chapter-details-option'], requestParam);
-    let requestParam = {queryParams: {query: "Generate 5 MCQ for", chapter: this.chapterTilte, content: contents, details: contentDetails}}
+    let requestParam = {queryParams: {query: "Generate 5 MCQ for", chapter: this.chapterTilte, content: contents, details: contentDetails, title: this.title}}
     await this.router.navigate(['./content-details'], requestParam);
   }
 
@@ -193,9 +196,21 @@ export class HomePage {
     await this.menuCtrl.isEnabled();
   }
 
-  emitSideMenuItemEvent(e: any, type: string) {
-    console.log('event ', e, type);
-    this.selectedUserType = type;
+  emitSideMenuItemEvent(e: any, user: any) {
+    console.log('event ', e, user);
+    this.selectedUserType = user.code;
+    if(this.selectedUserType == 'student') {
+      this.title = 'Learnmate'
+    } else {
+      this.title = "Teachmate"
+    }
+    this.supportedUserTypeConfig.forEach(usr => {
+      if(usr.code == this.selectedUserType) {
+        usr.selected = true;
+      } else {
+        usr.selected = false;
+      }
+    })
     this.menuCtrl.close().then((data) => {
     }).catch((e) => {
     })
