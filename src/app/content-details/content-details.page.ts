@@ -285,7 +285,7 @@ export class ContentDetailsPage implements OnInit {
         data[index] = ele
       }
     })
-    data[0] = dataEx[0]+data[0]
+    data[0] = dataEx[0]+(data[0] ? data[0] : '')
     // data[data.length-1] +=dataEx[dataEx.length-1]
     console.log('data ', data, data.length > 1);
     this.moreOption = data.length > 1 ? true : false;
@@ -296,7 +296,7 @@ export class ContentDetailsPage implements OnInit {
     })
     this.NextMessageArray = data;
     this.nextMsg = data[0]
-    this.headerMsg = header[0]
+    this.headerMsg = header[0] ? header[0] : ''
     console.log('data[0] ', data[0]);
     this.messages[this.messages.length-1].text = data[0] ? data[0] : 'No Response'
     // this.messages[this.messages.length-1].response = data[0]
