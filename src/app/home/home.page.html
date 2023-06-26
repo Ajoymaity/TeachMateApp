@@ -1,6 +1,6 @@
 <ion-menu contentId="main-content" class="sb-side-menu" side="start" persistent="true">
   <ion-header>
-    <ion-toolbar class="toolbar">
+    <ion-toolbar class="toolbar {{title}}">
       <ion-title>
         <!-- <img class="img-container" src="{{appLogo}}" alt="app logo"> -->
         <span class="app-name">{{appName}}</span>
@@ -11,9 +11,9 @@
     <div class="menu-section"> 
       <ion-list class="sb-menu-list" lines="none">
 
-        <ion-item *ngFor="let user of supportedUserTypeConfig" (click)="emitSideMenuItemEvent($event, user.code)">
+        <ion-item *ngFor="let user of supportedUserTypeConfig" (click)="emitSideMenuItemEvent($event, user)">
           <span class="sb-menu-icon sb-pt-6">
-            <img src="assets/{{user?.image}}" aria-hidden="true" class="tool-icon" alt="select {{user.name}}">
+            <img src="assets/{{user?.image}}" aria-hidden="true" class="tool-icon" style="width: 2.5rem;" alt="select {{user.name}}">
           </span>
           <div class="sb-teacher">
             <div class="sb-menu-item" role="button">{{user.name}}</div>
@@ -28,22 +28,22 @@
 </ion-menu> 
 
 <ion-header>
-  <ion-toolbar class="toolbar" id="main-content">
+  <ion-toolbar class="toolbar {{title}}" id="main-content">
     <ion-buttons class="sb-hamburger pl-10" slot="start">
       <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()">
-        <img src="./assets/ic_burger_menu.svg" role="button" class="tool-icon" alt="menu">
+        <ion-icon name="menu" size="large"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title style="font-size: 20px;">
-      <ion-label>TeachMate</ion-label>
+      <ion-label>{{title}}</ion-label>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- <div class="container">
-    <div class="card" *ngFor="let userTypeConfig of supportedUserTypeConfig;">
-      <div class="card-container" role="button" (click)="selectedUserType = userTypeConfig?.code; userType = userTypeConfig.name;" [class.selected]="selectedUserType === userTypeConfig?.code">
+  <div class="container">
+    <div class="card" *ngFor="let userTypeConfig of supportedUserTypeConfig;" style="margin-left: 25%;">
+      <div *ngIf="userTypeConfig.selected" class="card-container" role="button" (click)="selectedUserType = userTypeConfig?.code; userType = userTypeConfig.name;" [class.selected]="selectedUserType === userTypeConfig?.code">
         <div class="check-icon">
             <img class="icon-check" alt="" [class.selected]="selectedUserType === userTypeConfig?.code" src="assets/imgs/ic_check.svg"/>
         </div>
@@ -51,14 +51,13 @@
         <h4 class="card-title sb__ellipsis sb__ellipsis--two">{{ userTypeConfig?.name }}</h4>
       </div>
     </div>
-  </div> -->
-  <ion-item lines="none">
+  </div>
+  <!-- <ion-item lines="none">
     <h2>{{selectedUserType}}</h2>
-  </ion-item>
-
+  </ion-item> -->
 </ion-content>
 
-<ion-footer>
+<ion-footer class="{{title}}">
   <div class="qr-btn-container">
     <div class="qr-btn" role="button" (click)="openQRScanner()">
       <img src="assets/ic_qr_scanner.svg" alt="">
