@@ -273,33 +273,50 @@ export class ContentDetailsPage implements OnInit {
   }
 
   ModifyResponseForUI(test: any) {
-    const data = Array.from(test.matchAll(this.rx)).filter((sentence: any) => sentence[0]).map((sentence: any) => `${sentence}`)
-    console.log('data ', data)
-    const dataEx = test.split(/\d+. [^\n]*/g)
-    console.log('dataEx after replace ', dataEx)
-    data.forEach((ele, index) => {
-      ele = ele.replace('\n\n', '')
-      if (dataEx[index+1] != '') {
-        data[index] = ele +dataEx[index+1].replace('\n\n', '')
-      } else {
-        data[index] = ele
-      }
-    })
-    data[0] = dataEx[0]+(data[0] ? data[0] : '')
-    // data[data.length-1] +=dataEx[dataEx.length-1]
-    console.log('data ', data, data.length > 1);
-    this.moreOption = data.length > 1 ? true : false;
-    const header = Array.from(data[0].matchAll(this.rx), (m) => m[0].split(":")[0].split('.')[1])
+    let responseData: any
+    if (test.includes('Assignment 1:')) { 
+      let regex = /Assignment\s(\d)[:]/g
+      let header = Array.from(test.matchAll(regex)).filter((sentence: any) => sentence[0][0]).map((sentence: any) => `${sentence[0]}`)
+      let d = test.split(regex)
+      let i = 0;
+       d.forEach((ele: any) => {
+         if (!parseInt(ele)) {
+           if (ele) {
+             header[i] = header[i].concat(ele);
+             i++
+           }
+         }
+       })
+       console.log(header)
+      responseData = header;
+    } else {
+      const data = Array.from(test.matchAll(this.rx)).filter((sentence: any) => sentence[0]).map((sentence: any) => `${sentence}`)
+      console.log('data ', data)
+      const dataEx = test.split(/\d+. [^\n]*/g)
+      console.log('dataEx after replace ', dataEx)
+      data.forEach((ele, index) => {
+        ele = ele.replace('\n\n', '')
+        if (dataEx[index+1] != '') {
+          data[index] = ele +dataEx[index+1].replace('\n\n', '')
+        } else {
+          data[index] = ele
+        }
+      })
+      data[0] = dataEx[0]+(data[0] ? data[0] : '')
+      console.log('data ', data, data.length > 1);
+      responseData = data;
+    }
+    this.moreOption = responseData.length > 1 ? true : false;
+    const header = Array.from(responseData[0].matchAll(this.rx), (m: any) => m[0].split(":")[0].split('.')[1])
     console.log(header)
     this.content.scrollToBottom(100).then(()=>{
       this.content.scrollToBottom(100);
     })
-    this.NextMessageArray = data;
-    this.nextMsg = data[0]
+    this.NextMessageArray = responseData;
+    this.nextMsg = responseData[0]
     this.headerMsg = header[0] ? header[0] : ''
-    console.log('data[0] ', data[0]);
-    this.messages[this.messages.length-1].text = data[0] ? data[0] : 'No Response'
-    // this.messages[this.messages.length-1].response = data[0]
+    console.log('responseData[0] ', responseData[0]);
+    this.messages[this.messages.length-1].text = responseData[0] ? responseData[0] : 'No Response'
   }
 
   async readAloud() {
