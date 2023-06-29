@@ -13,10 +13,10 @@
 
         <ion-item *ngFor="let user of supportedUserTypeConfig" (click)="emitSideMenuItemEvent($event, user)">
           <span class="sb-menu-icon sb-pt-6">
-            <img src="assets/{{user?.image}}" aria-hidden="true" class="tool-icon" style="width: 2.5rem;" alt="select {{user.name}}">
+            <img src="assets/{{user?.image}}" aria-hidden="true" class="tool-icon" style="width: 2.5rem;" alt="select {{user.appName}}">
           </span>
           <div class="sb-teacher">
-            <div class="sb-menu-item" role="button">{{user.name}}</div>
+            <div class="sb-menu-item" role="button">{{user.appName}}</div>
           </div>
         </ion-item>
       </ion-list>
@@ -48,20 +48,20 @@
             <img class="icon-check" alt="" [class.selected]="selectedUserType === userTypeConfig?.code" src="assets/imgs/ic_check.svg"/>
         </div>
         <img class="thumbnail" alt="" src="assets/{{ userTypeConfig?.image }}" [ngClass]="{'coming-soon-image': !userTypeConfig?.isActive}" />
-        <h4 class="card-title sb__ellipsis sb__ellipsis--two">{{ userTypeConfig?.name }}</h4>
+        <h4 class="card-title sb__ellipsis sb__ellipsis--two">{{ userTypeConfig?.appName }}</h4>
       </div>
     </div>
   </div>
-  <!-- <ion-item lines="none">
-    <h2>{{selectedUserType}}</h2>
-  </ion-item> -->
+  <ion-item lines="none">
+    <h4 style="text-align: center; font-style: italic; width: 100%;">{{description}}</h4>
+  </ion-item>
 </ion-content>
 
 <ion-footer class="{{title}}">
   <div class="qr-btn-container">
     <div class="qr-btn" role="button" (click)="openQRScanner()">
       <img src="assets/ic_qr_scanner.svg" alt="">
-      <span>Scan</span>
+      <span style="color: black;">Scan</span>
     </div>
   </div>
 </ion-footer>

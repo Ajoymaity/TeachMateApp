@@ -19,20 +19,27 @@
   <div id="content" style="overflow-y: auto;">
     <div>
       <div class="float-left">
-        <img class="img" alt="bot" src="assets/teachBot.png"/>
+        <img class="img" *ngIf="title == 'TeachMate'" alt="bot" src="assets/teachBot.png"/>
+        <img class="img" *ngIf="title == 'LearnMate'" alt="bot" src="assets/ic_student.svg"/>
         <ion-card style="height: auto;">
           <ion-card-content>
             <ion-label class="text-style" style="color: black;">
-              Hello, I'm TeachMate,
-              <br> your assistant to help you teach <b>{{chapterName}}</b>.  
-              <br>TeachMate provides you lesson plans, teacher activities, assessments and assignments for your class. 
+              Hello, I'm {{title}},
+              <br>
+              <span *ngIf="title == 'TeachMate'">your assistant to help you teach <b>{{chapterName}}</b>
+                <br>TeachMate provides you lesson plans, teacher activities, assessments and assignments for your class.
+              </span>
+              <span *ngIf="title == 'LearnMate'">your friend to help you learn <b>{{chapterName}}</b>
+                <br>I'll help you revise quickly, read stories, play with quizzes and much more. You can ask a question anytime using the chat window below.
+              </span>
               <br>To proceed Choose a Language.
             </ion-label>
           </ion-card-content>
         </ion-card>
       </div>
       <div class="float-left">
-        <img class="img" alt="bot" src="assets/teachBot.png"/>
+        <img class="img" *ngIf="title == 'TeachMate'" alt="bot" src="assets/teachBot.png"/>
+        <img class="img" *ngIf="title == 'LearnMate'" alt="bot" src="assets/ic_student.svg"/>
         <ion-card style="height: auto; display: flex; flex-direction: column;">
           <ion-card-content>
             <ion-label class="text-style" style="color: black;">
@@ -47,7 +54,8 @@
         </ion-card>
       </div>
       <div *ngIf="selectedLanguage" class="float-left">
-        <img class="img" alt="bot" src="assets/teachBot.png"/>
+        <img class="img" *ngIf="title == 'TeachMate'" alt="bot" src="assets/teachBot.png"/>
+        <img class="img" *ngIf="title == 'LearnMate'" alt="bot" src="assets/ic_student.svg"/>
         <ion-card style="height: auto;">
           <ion-card-content>
             <ion-label class="text-style" style="color: black;">You have chosen <b>{{selectedLanguage}}</b>. Enter your query.</ion-label>
@@ -57,18 +65,21 @@
     </div>
     <div *ngFor="let msg of messages; let i = index;">
       <div [ngClass]="{'float-right': msg.from === 0, 'float-left': msg.from === 1}">
-        <img class="img" *ngIf="msg.from === 1" alt="bot" src="assets/teachBot.png"/>
+        <img class="img" *ngIf="msg.from === 1 && title == 'TeachMate'" alt="bot" src="assets/teachBot.png"/>
+        <img class="img" *ngIf="msg.from === 1 && title == 'LearnMate'" alt="bot" src="assets/ic_student.svg"/>
         <ion-card style="height: auto;" *ngIf="!msg.innerHtml">
           <ion-card-content>
             <ion-label class="text-style" style="color: black;">{{msg.text}}</ion-label>
             <ion-label class="text-style" *ngIf="msg.from === 1 && msg.text == ''" style="color: black;">crafting ....</ion-label>
-            <ion-button *ngIf="msg.from === 1 && msg.text !== 'No Response' && msg.text !== '' && moreOption" fill="clear" (click)="nextMsgData()" style="text-align: center; width: 100%">Read more ...</ion-button>
+            <ion-button *ngIf="msg.from === 1 && msg.text !== 'No Response' && msg.text !== '' && msg.moreOption" fill="clear" (click)="nextMsgData(msg)" style="text-align: center; width: 100%">Read more ...</ion-button>
           </ion-card-content>
         </ion-card>
         <ion-card>
           <ion-card-content id="chip{{i}}" style="height: auto;" *ngIf="msg.innerHtml"></ion-card-content>
         </ion-card>
-        <ion-icon *ngIf="msg.from === 0" name="person-circle-outline" style="width: 2rem !important; height: 2rem !important; padding: 7px 0; color: black;"></ion-icon>
+        <img class="img" *ngIf="msg.from === 0" alt="user" src="assets/me.png"/>
+        
+        <!-- <ion-icon *ngIf="msg.from === 0" name="person-circle-outline" style="width: 2rem !important; height: 2rem !important; padding: 7px 0; color: black;"></ion-icon> -->
       </div>
     </div>
   </div>
