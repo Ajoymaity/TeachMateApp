@@ -87,7 +87,7 @@
 
 <ion-footer class="{{title}}">
   <div>
-    <ion-chip [disabled]="disableSelect" *ngFor="let option of extraOptions" (click)="selectedOptions(option)" id="{{option?.id}}">
+    <ion-chip [disabled]="disableSelect" *ngFor="let option of extraOptions" (click)="selectedOptions(option, false)" id="{{option?.id}}">
       <ion-label *ngIf="option.name && option.icon == ''" style="white-space: nowrap; color: black;">{{option.name}}</ion-label>
       <ion-icon *ngIf="option.icon" class="{{option.icon}}" name="{{option.icon}}" style="color: black;"></ion-icon>
     </ion-chip>
@@ -95,7 +95,7 @@
   <ion-popover #popover trigger="trigger-button">
     <ng-template>
       <ion-list style="background: white">
-        <ion-item *ngFor="let action of quickActions" style="color: black;" (click)="handleAction(action)">
+        <ion-item *ngFor="let action of quickActions" style="color: black;" (click)="selectedOptions(action, true)">
           <!-- <ion-icon name="{{action.icon}}"></ion-icon> -->
           <ion-label>{{action.name}}</ion-label>
         </ion-item>

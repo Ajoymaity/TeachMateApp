@@ -10,6 +10,7 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
 import { Printer } from "@awesome-cordova-plugins/printer/ngx";
+import { Observable } from 'rxjs';
 enum Creator {
   Me = 0,
   Bot = 1,
@@ -89,8 +90,7 @@ export class ContentDetailsPage implements OnInit {
     {icon: "add", name: "add", id: 'trigger-button', 
       quickActions: [ 
         {name: 'Explain more'}, 
-        {name: 'Assignments'}, 
-        // {name: "Know more"}, 
+        {name: 'Assignments'},
         {name: "Read Aloud"}, 
         {name: "Print and Download"}
       ]
@@ -135,7 +135,7 @@ export class ContentDetailsPage implements OnInit {
   //   });
   // }
 
-  askQuestion() {
+  async askQuestion() {
     if (this.selectedLanguage && this.question?.trim()) {
       (window as any).Keyboard.hide();
       this.nextMsg = "";
@@ -144,7 +144,7 @@ export class ContentDetailsPage implements OnInit {
       this.content.scrollToBottom(100).then(() => {
         this.content.scrollToBottom(100)
       });
-      msg = { text: this.question, response:this.question, from: Creator.Me, innerHtml: false, htmltext:'', moreOption: false };
+      msg = { text: this.question, response:this.question, moreArray: [], from: Creator.Me, innerHtml: false, htmltext:'', moreOption: false };
       this.messages.push(msg);
       this.disableSelect = true;
       console.log('this.details.gradeLevel',  this.details.gradeLevel)
@@ -153,38 +153,59 @@ export class ContentDetailsPage implements OnInit {
       let url = `${environment.baseUrl}=${this.question}`;
       console.log('url is', url)
       this.question = "";
-      msg = { text: "", response: '', from: Creator.Bot, innerHtml: false, htmltext:'', moreOption: true }
-      this.messages.push(msg);
-      console.log('before get')
-      try {
-        this.http.get(url, { responseType: 'text' }).subscribe((res: any) => {
-          console.log('.....................', res);
-          this.messages[this.messages.length-1].response = res;
-          this.ModifyResponseForUI(res);
-          this.disableSelect = false;
-        });
-      } 
-      catch(err: any) {
-        console.log('.....................', err)
-        this.messages[this.messages.length-1].text = `Error - ${err?.statusText}`
-        this.messages[this.messages.length-1].response = `Error - ${err?.statusText}`
-        this.disableSelect = false;
-      }
+      this.handleApiCall(url);
     }
   }
-  
-  async selectedOptions(option: any) {
-    console.log('option ', option);
-    this.getAPIforTeacherAid(option);
+  chatStream(url: any) {
+    return new Observable<string>((observer: any) => {
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then(response => {
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        if (!response.ok) {
+           // handle response error 
+           console.log('error ');
+           observer.error();
+        }
+
+        function push() {
+          return reader?.read().then(({ done, value }) => {
+            if (done) {
+              observer.complete();
+              return;
+            }
+            //parse text content from response
+            const events = decoder.decode(value);
+            let content = '';
+            for (let i = 0; i < events.length; i++) {
+              const event = events[i];
+              content += event;
+            }
+            observer.next(content);
+            push();
+          });
+        }
+
+        push();
+      }).catch((err: Error) => {
+        // handle fetch error
+        observer.error(err);
+      });
+    });
   }
-  
-  async handleAction(action: any) {
-    console.log('action ', action);
-    await this.popover.dismiss();
-    // await this.popover.onDidDismiss().then(() => {
+
+  async selectedOptions(option: any, dismiss: boolean) {
+    console.log('option ', option);
+    if(dismiss) {
+      await this.popover.dismiss();
+      this.disableSelect = false;await this.popover.dismiss();
       this.disableSelect = false;
-    // })
-    this.getAPIforTeacherAid(action);
+    }
+    this.getAPIforTeacherAid(option);
   }
 
 
@@ -240,7 +261,7 @@ export class ContentDetailsPage implements OnInit {
         break;
     }
     if (textmsg && query) {
-      let msg = { text: `${textmsg}`, response: `${textmsg}`, from: Creator.Me, innerHtml: false, htmltext:'', moreOption: false };
+      let msg = { text: `${textmsg}`, response: `${textmsg}`, moreArray: [''], from: Creator.Me, innerHtml: false, htmltext:'', moreOption: false };
       this.previousQuery = query;
       this.messages.push(msg);
       this.content.scrollToBottom(100).then(()=>{
@@ -249,14 +270,14 @@ export class ContentDetailsPage implements OnInit {
       query = (query+` in ${this.selectedLanguage}`).split(' ').join('%20');
       let url = environment.baseUrl+'='+query;
       console.log('url ', url)
-      this.handleApiCall(url);
+      this.handleApiCall(url, type);
     }
   }
 
   getMoreInfo() {
     if (this.headerMsg) {
       let query = `Tell me more about ${this.headerMsg}`;
-      let msg = { text: query, response: '', from: Creator.Me, innerHtml: false, htmltext:'', moreOption: false }
+      let msg = { text: query, response: '', moreArray: [''], from: Creator.Me, innerHtml: false, htmltext:'', moreOption: false }
       this.messages.push(msg);
       query = (query+` in ${this.selectedLanguage}`).split(' ').join('%20');
       let url = environment.baseUrl+'='+query;
@@ -265,95 +286,141 @@ export class ContentDetailsPage implements OnInit {
     }
   }
 
-  handleApiCall(url: any) {
+  handleApiCall(url: any, type?: any) {
     let msg;
-    msg = { text: '', response: '', from: Creator.Bot, innerHtml: false, htmltext:'', moreOption: true };
+    msg = { text: '', response: '', moreArray: [], from: Creator.Bot, innerHtml: false, htmltext:'', moreOption: true };
     this.messages.push(msg);
     this.content.scrollToBottom(100).then(()=>{
       this.content.scrollToBottom(100);
     })
     this.nextMsg = "";
-    try {
-      this.http.get(url, { responseType: 'text' }).subscribe((res: any) => {
-        console.log('res ', res);
-        this.disableSelect = false;
-        if (res) {
-          this.messages[this.messages.length-1].response = res;
-          this.ModifyResponseForUI(res);
-        } else {
-          this.content.scrollToBottom(100).then(()=>{
-
-            this.content.scrollToBottom(100);
-          })
-          this.messages[this.messages.length-1].response = `No Response`
-          this.messages[this.messages.length-1].text = this.messages[this.messages.length-1].response;
+    let array = '';
+    let botMsg: string = '';
+    let textArray = false;
+    this.chatStream(url).subscribe({
+      next: (text: any) => {
+        let msgText = this.messages[this.messages.length-1];
+        // if (msgText.text.length <= 100 && (/^[-:.)?\d]*/g).test(msgText.text)) {
+        //   console.log('if cndtn ', text);
+        //   botMsg += text;
+        //   msgText.text += text;
+        // } else {
+          // if(botMsg) {
+          //   msgText.moreArray.push(botMsg)
+          //   botMsg = '';
+          // }
+          // array += text;
+          // console.log('msgText.moreArray.length ', msgText.moreArray.length, msgText.moreArray);
+          // if (msgText.moreArray.length == 0) {
+          //   this.messages[this.messages.length-1].text += text
+          // }
+          // console.log('else cndtn ', text, msgText.moreArray);
+          // if((/\n\n-/g.test(text))) {
+          //   // if(((/\d+[.):]/g.test(text)) || (/-/.test(text)))) {
+          //   console.log('else if cndtn');
+          //   msgText.moreArray.push(array);
+          //   array = '';
+          // }
+        // }
+        array += text
+        if(!textArray) {
+          msgText.text += text
+          this.nextMsg += text
+        } 
+        if(type == 'Explain more' || type == 'Stories') {
+          if (array.length > 100) {
+            textArray = true;
+            msgText.moreArray.push(array);
+            msgText.moreOption = true;
+            array = ''
+          }
+        } else if (/:|-/g.test(array) || /\d+[.):]/g.test(array)) {
+          textArray = true;
+          console.log('array ', array);
+          console.log('botMsg ', botMsg);
+          msgText.moreArray.push(botMsg);
+          msgText.moreOption = true;
+          array = ''
+          botMsg = ''
         }
-      });
-    } catch(err: any) {
-      console.log('.....................', err)
-      this.messages[this.messages.length-1].text = `Error - ${err?.statusText}`
-      this.messages[this.messages.length-1].response = `Error - ${err?.statusText}`
-      this.disableSelect = false;
-    }
-  }
-
-  ModifyResponseForUI(test: any) {
-    let responseData: any
-    if (test.includes('Assignment 1:')) { 
-      let regex = /Assignment\s(\d)[:]/g
-      let header = Array.from(test.matchAll(regex)).filter((sentence: any) => sentence[0][0]).map((sentence: any) => `${sentence[0]}`)
-      let d = test.split(regex)
-      let i = 0;
-       d.forEach((ele: any) => {
-         if (!parseInt(ele)) {
-           if (ele) {
-             header[i] = header[i].concat(ele);
-             i++
-           }
-         }
-       })
-       console.log(header)
-      responseData = header;
-    } else {
-      const data = Array.from(test.matchAll(this.rx)).filter((sentence: any) => sentence[0]).map((sentence: any) => `${sentence}`)
-      console.log('data ', data)
-      const dataEx = test.split(/\d+. [^\n]*/g)
-      console.log('dataEx after replace ', dataEx)
-      data.forEach((ele, index) => {
-        if (dataEx[index+1] != '') {
-          data[index] = ele + dataEx[index+1];
-        } else {
-          data[index] = ele
-        }
-      })
-      data[0] = dataEx[0]+(data[0] ? data[0] : '')
-      console.log('data ', data, data.length > 1);
-      responseData = data;
-    }
-    this.moreOption = responseData.length > 1 ? true : false;
-    this.messages[this.messages.length-1].moreOption = this.moreOption;
-    const header = Array.from(responseData[0].matchAll(this.rx), (m: any) => m[0].split(":")[0].split('.')[1])
-    console.log(header)
-    this.content.scrollToBottom(100).then(()=>{
-      this.content.scrollToBottom(100);
-    })
-    this.NextMessageArray = responseData;
-    this.nextMsg = responseData[0];
-    this.headerMsg = header[0] ? header[0] : '';
-    console.log('responseData[0] ', responseData[0], responseData[0].length);
-    if(responseData.length == 1) {
-      let response: any = responseData[0].length > 100 ? responseData[0].match(/.{1,100}/g) : responseData[0];
-      console.log('response story ', response);
-      this.NextMessageArray = response
-      if(response.length) {
+        botMsg += text;
+        msgText.response += text
+        this.content.scrollToBottom(300)
+      },
+      complete: () => {
+        this.messages[this.messages.length-1].moreArray.push(botMsg);
         this.messages[this.messages.length-1].moreOption = true;
-        this.nextMsg = response[0];
-        this.messages[this.messages.length-1].text = response[0];
+        if (this.messages[this.messages.length-1].moreArray.length == 0 || this.messages[this.messages.length-1].moreArray[0] == "") {
+          this.messages[this.messages.length-1].moreOption = false;
+          this.messages[this.messages.length-1].text = 'No Response';
+        }
+        this.disableSelect = false;
+        console.log('stream api complete response ', this.messages[this.messages.length-1]);
+      },
+      error: (e) => {
+        this.disableSelect = false;
+        console.log('stream api error response ', e);
       }
-    } else {
-      this.messages[this.messages.length-1].text = responseData[0] ? responseData[0] : 'No Response';
-    }
+    });
   }
+
+  // ModifyResponseForUI(test: any) {
+  //   let responseData: any
+  //   if (test.includes('Assignment 1:')) { 
+  //     let regex = /Assignment\s(\d)[:]/g
+  //     let header = Array.from(test.matchAll(regex)).filter((sentence: any) => sentence[0][0]).map((sentence: any) => `${sentence[0]}`)
+  //     let d = test.split(regex)
+  //     let i = 0;
+  //      d.forEach((ele: any) => {
+  //        if (!parseInt(ele)) {
+  //          if (ele) {
+  //            header[i] = header[i].concat(ele);
+  //            i++
+  //          }
+  //        }
+  //      })
+  //      console.log(header)
+  //     responseData = header;
+  //   } else {
+  //     const data = Array.from(test.matchAll(this.rx)).filter((sentence: any) => sentence[0]).map((sentence: any) => `${sentence}`)
+  //     console.log('data ', data)
+  //     const dataEx = test.split(/\d+. [^\n]*/g)
+  //     console.log('dataEx after replace ', dataEx)
+  //     data.forEach((ele, index) => {
+  //       if (dataEx[index+1] != '') {
+  //         data[index] = ele + dataEx[index+1];
+  //       } else {
+  //         data[index] = ele
+  //       }
+  //     })
+  //     data[0] = dataEx[0]+(data[0] ? data[0] : '')
+  //     console.log('data ', data, data.length > 1);
+  //     responseData = data;
+  //   }
+  //   this.moreOption = responseData.length > 1 ? true : false;
+  //   this.messages[this.messages.length-1].moreOption = this.moreOption;
+  //   const header = Array.from(responseData[0].matchAll(this.rx), (m: any) => m[0].split(":")[0].split('.')[1])
+  //   console.log(header)
+  //   this.content.scrollToBottom(100).then(()=>{
+  //     this.content.scrollToBottom(100);
+  //   })
+  //   this.NextMessageArray = responseData;
+  //   this.nextMsg = responseData[0];
+  //   this.headerMsg = header[0] ? header[0] : '';
+  //   console.log('responseData[0] ', responseData[0], responseData[0].length);
+  //   if(responseData.length == 1) {
+  //     let response: any = responseData[0].length > 100 ? responseData[0].match(/.{1,100}/g) : responseData[0];
+  //     console.log('response story ', response);
+  //     this.NextMessageArray = response
+  //     if(response.length) {
+  //       this.messages[this.messages.length-1].moreOption = true;
+  //       this.nextMsg = response[0];
+  //       this.messages[this.messages.length-1].text = response[0];
+  //     }
+  //   } else {
+  //     this.messages[this.messages.length-1].text = responseData[0] ? responseData[0] : 'No Response';
+  //   }
+  // }
 
   async readAloud() {
     let text = this.messages[this.messages.length-1].innerHtml ? this.messages[this.messages.length-1].htmltext : this.messages[this.messages.length-1].text;
@@ -441,29 +508,53 @@ export class ContentDetailsPage implements OnInit {
   }
 
   nextMsgData(msg: any) {
+    console.log('next message ', this.nextMsg);
+    console.log('msg ', msg);
     let lastmsg = this.messages[this.messages.length-1];
     if (lastmsg.from == Creator.Bot && lastmsg.text && lastmsg.text !== 'No Response') {
       let index: number = 0
       console.log('on next ', this.nextMsg)
-      this.NextMessageArray.forEach((nxt: any, i: any) => {
-        if(nxt === this.nextMsg) {
-          index = i;
-          this.nextMsg = "";
+      // if (this.NextMessageArray) {
+      //   this.NextMessageArray.forEach((nxt: any, i: any) => {
+      //     if(nxt === this.nextMsg) {
+      //       index = i;
+      //       this.nextMsg = "";
+      //     }
+      //   })
+      //   if (this.NextMessageArray[index+1]) {
+      //     this.nextMsg = this.NextMessageArray[index+1]
+      //     console.log('no more ', this.NextMessageArray[index+2])
+      //     if (!this.NextMessageArray[index+2]) {
+      //       this.moreOption = false;
+      //       msg.moreOption = false;
+      //     }
+      //     this.content.scrollToBottom(100).then(()=>{
+      //       this.content.scrollToBottom(100);
+      //     })
+      //     this.headerMsg = Array.from(this.nextMsg.matchAll(this.rx), (m: any) => m[0].split(":")[0].split('.')[1])
+      //     lastmsg.text += (/^[A-Z]/.test(this.nextMsg)) ? `\n\n`+ this.nextMsg : this.nextMsg;
+      //   }
+      // }
+      msg.moreArray.forEach((nxt: any, i: any) => {
+        if(this.nextMsg === nxt) {
+          console.log('if ', i, msg.moreArray.length, nxt);
+          index = i
+          this.nextMsg = ''
         }
       })
-      if (this.NextMessageArray[index+1]) {
-        this.nextMsg = this.NextMessageArray[index+1]
-        console.log('no more ', this.NextMessageArray[index+2])
-        if (!this.NextMessageArray[index+2]) {
-          this.moreOption = false;
-          msg.moreOption = false;
-        }
-        this.content.scrollToBottom(100).then(()=>{
-          this.content.scrollToBottom(100);
-        })
-        this.headerMsg = Array.from(this.nextMsg.matchAll(this.rx), (m: any) => m[0].split(":")[0].split('.')[1])
-        lastmsg.text += (/^[A-Z]/.test(this.nextMsg)) ? `\n\n`+ this.nextMsg : this.nextMsg;
+      if(msg.moreArray[index+1] && this.nextMsg !== msg.moreArray[index+1]) {
+        console.log('if condt next index ', msg.moreArray[index+1], this.nextMsg !== msg.moreArray[index+1]);
+        this.nextMsg = ''
+        this.nextMsg = msg.moreArray[index+1];
+        msg.text += msg.moreArray[index+1];
       }
+      if(index+1 == msg.moreArray.length-1) {
+        msg.moreOption = false;
+      }
+      this.content.scrollToBottom(100).then(()=>{
+        this.content.scrollToBottom(100);
+      })
+      console.log('msg next ', msg)
     }
   }
 
