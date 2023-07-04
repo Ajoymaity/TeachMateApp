@@ -34,19 +34,7 @@ export class ContentDetailsPage implements OnInit {
   userType: string = '';
   @ViewChild(IonContent, {static: true}) private content: any;
   quickActions: any = [];
-  extraOptions = [{icon: '', name: 'Teacher Aid'},
-    {icon: '', name: 'Stories'}, 
-    {icon: '', name: 'Assessments'},
-    {icon: "add", name: "add", id: 'trigger-button', 
-      quickActions: [ 
-        {name: 'Explain more'}, 
-        {name: 'Assignments'}, 
-        // {name: "Know more"}, 
-        {name: "Read Aloud"}, 
-        {name: "Print and Download"}
-      ]
-    }
-  ]
+  extraOptions: any = []
   @ViewChild(IonPopover) popover: IonPopover;
   @ViewChild(IonPopover) popoverhint: IonPopover;
   recording: boolean = false;
@@ -93,8 +81,35 @@ export class ContentDetailsPage implements OnInit {
     this.languages = [{name: "English", code: 'en', selected: false}, {name: "Hindi", code:'hi', selected: false}
     // {name: "Kannada", code:'kn', selected: false},  {name: "Telugu", code:'te', selected: false}
   ]
+    this.extraOptions = 
+    (this.title == 'TeachMate') ?
+    [{icon: '', name: 'Teacher Aid'},
+    {icon: '', name: 'Stories'}, 
+    {icon: '', name: 'Assessments'},
+    {icon: "add", name: "add", id: 'trigger-button', 
+      quickActions: [ 
+        {name: 'Explain more'}, 
+        {name: 'Assignments'}, 
+        // {name: "Know more"}, 
+        {name: "Read Aloud"}, 
+        {name: "Print and Download"}
+      ]
+    }] 
+    : 
+    [{icon: '', name: 'Quick Revision'},
+    {icon: '', name: 'Stories'}, 
+    {icon: '', name: 'Quiz'},
+    {icon: "add", name: "add", id: 'trigger-button', 
+      quickActions: [ 
+        {name: 'Explain more'}, 
+        {name: 'Important Words'}, 
+        {name: "Read Aloud"}, 
+        {name: "Print and Download"}
+      ]
+    }]
   }
   rx = /\d+[.):] [^\n]*/g;
+  // rx = /[- [\w]+|\d|\w]+[.):] [^\n]*/g;
   moreOption = false;
   ngOnInit() {
   }
@@ -129,7 +144,7 @@ export class ContentDetailsPage implements OnInit {
       this.content.scrollToBottom(100).then(() => {
         this.content.scrollToBottom(100)
       });
-      msg = { text: this.question, response:this.question, from: Creator.Me, innerHtml: false, htmltext:'' };
+      msg = { text: this.question, response:this.question, from: Creator.Me, innerHtml: false, htmltext:'', moreOption: false };
       this.messages.push(msg);
       this.disableSelect = true;
       console.log('this.details.gradeLevel',  this.details.gradeLevel)
@@ -138,7 +153,7 @@ export class ContentDetailsPage implements OnInit {
       let url = `${environment.baseUrl}=${this.question}`;
       console.log('url is', url)
       this.question = "";
-      msg = { text: "", response: '', from: Creator.Bot, innerHtml: false, htmltext:'' }
+      msg = { text: "", response: '', from: Creator.Bot, innerHtml: false, htmltext:'', moreOption: true }
       this.messages.push(msg);
       console.log('before get')
       try {
@@ -183,11 +198,11 @@ export class ContentDetailsPage implements OnInit {
         textmsg = `Teacher aid ${this.chapterName}`;
         break;
       case 'Stories':
-        query = `A simple story in 150 words which can help to teach ${this.chapterName}`;
-        textmsg = `Story to teach ${this.chapterName}`
+        query = this.title== 'TeachMate' ? `A simple story in 150 words which can help to teach ${this.chapterName}`: `As a student, To help understand ${this.chapterName} a simple story in 150 words`;
+        textmsg = this.title== 'TeachMate' ? `Story to teach ${this.chapterName}` : `Story to understand ${this.chapterName}`
         break;
       case 'Assessments':
-        query = `generate 5 MCQs on ${this.chapterName}`;
+        query = `generate 5 MCQs on ${this.chapterName} with answers`;
         textmsg = `Assessments for my class for ${this.chapterName}`
         break;
       case "add":
@@ -195,7 +210,7 @@ export class ContentDetailsPage implements OnInit {
         this.disableSelect = false
         break;
       case 'Explain more':
-        query = `Explain more about the ${this.previousQuery} in simple words with examples in 100 words`;
+        query = this.title== 'TeachMate' ? `explain more about the ${this.chapterName} in simple words with examples in 100 words` : `As a student, explain more about the ${this.chapterName} in simple words with examples in 100 words`;
         textmsg = `Explain more ${this.chapterName}`;
         break;
       case 'Assignments':
@@ -211,13 +226,24 @@ export class ContentDetailsPage implements OnInit {
       case "Print and Download": 
         this.handlePrint();
         break;
+      case "Quiz":
+        query = `As a student, generate 5 MCQs on ${this.chapterName}`
+        textmsg = `Quiz for ${this.chapterName}`
+        break;
+      case "Quick Revision":
+        query = `As a student, For ${this.chapterName}, give summary in bullet points, important questions with answers, and real-life examples in simple english in bullet points`
+        textmsg = `Quick revision for ${this.chapterName}`
+        break;
+      case "Important Words":
+        query = `As a student, for ${this.chapterName} give a few important words with meaning and examples`
+        textmsg = `Important words for ${this.chapterName}`
+        break;
     }
     if (textmsg && query) {
-      let msg = { text: `${textmsg}`, response: `${textmsg}`, from: Creator.Me, innerHtml: false, htmltext:'' };
+      let msg = { text: `${textmsg}`, response: `${textmsg}`, from: Creator.Me, innerHtml: false, htmltext:'', moreOption: false };
       this.previousQuery = query;
       this.messages.push(msg);
       this.content.scrollToBottom(100).then(()=>{
-
         this.content.scrollToBottom(100);
       })
       query = (query+` in ${this.selectedLanguage}`).split(' ').join('%20');
@@ -230,7 +256,7 @@ export class ContentDetailsPage implements OnInit {
   getMoreInfo() {
     if (this.headerMsg) {
       let query = `Tell me more about ${this.headerMsg}`;
-      let msg = { text: query, response: '', from: Creator.Me, innerHtml: false, htmltext:'' }
+      let msg = { text: query, response: '', from: Creator.Me, innerHtml: false, htmltext:'', moreOption: false }
       this.messages.push(msg);
       query = (query+` in ${this.selectedLanguage}`).split(' ').join('%20');
       let url = environment.baseUrl+'='+query;
@@ -241,10 +267,9 @@ export class ContentDetailsPage implements OnInit {
 
   handleApiCall(url: any) {
     let msg;
-    msg = { text: '', response: '', from: Creator.Bot, innerHtml: false, htmltext:'' };
+    msg = { text: '', response: '', from: Creator.Bot, innerHtml: false, htmltext:'', moreOption: true };
     this.messages.push(msg);
     this.content.scrollToBottom(100).then(()=>{
-
       this.content.scrollToBottom(100);
     })
     this.nextMsg = "";
@@ -295,9 +320,8 @@ export class ContentDetailsPage implements OnInit {
       const dataEx = test.split(/\d+. [^\n]*/g)
       console.log('dataEx after replace ', dataEx)
       data.forEach((ele, index) => {
-        ele = ele.replace('\n\n', '')
         if (dataEx[index+1] != '') {
-          data[index] = ele +dataEx[index+1].replace('\n\n', '')
+          data[index] = ele + dataEx[index+1];
         } else {
           data[index] = ele
         }
@@ -307,16 +331,28 @@ export class ContentDetailsPage implements OnInit {
       responseData = data;
     }
     this.moreOption = responseData.length > 1 ? true : false;
+    this.messages[this.messages.length-1].moreOption = this.moreOption;
     const header = Array.from(responseData[0].matchAll(this.rx), (m: any) => m[0].split(":")[0].split('.')[1])
     console.log(header)
     this.content.scrollToBottom(100).then(()=>{
       this.content.scrollToBottom(100);
     })
     this.NextMessageArray = responseData;
-    this.nextMsg = responseData[0]
-    this.headerMsg = header[0] ? header[0] : ''
-    console.log('responseData[0] ', responseData[0]);
-    this.messages[this.messages.length-1].text = responseData[0] ? responseData[0] : 'No Response'
+    this.nextMsg = responseData[0];
+    this.headerMsg = header[0] ? header[0] : '';
+    console.log('responseData[0] ', responseData[0], responseData[0].length);
+    if(responseData.length == 1) {
+      let response: any = responseData[0].length > 100 ? responseData[0].match(/.{1,100}/g) : responseData[0];
+      console.log('response story ', response);
+      this.NextMessageArray = response
+      if(response.length) {
+        this.messages[this.messages.length-1].moreOption = true;
+        this.nextMsg = response[0];
+        this.messages[this.messages.length-1].text = response[0];
+      }
+    } else {
+      this.messages[this.messages.length-1].text = responseData[0] ? responseData[0] : 'No Response';
+    }
   }
 
   async readAloud() {
@@ -404,7 +440,7 @@ export class ContentDetailsPage implements OnInit {
     });
   }
 
-  nextMsgData() {
+  nextMsgData(msg: any) {
     let lastmsg = this.messages[this.messages.length-1];
     if (lastmsg.from == Creator.Bot && lastmsg.text && lastmsg.text !== 'No Response') {
       let index: number = 0
@@ -420,12 +456,13 @@ export class ContentDetailsPage implements OnInit {
         console.log('no more ', this.NextMessageArray[index+2])
         if (!this.NextMessageArray[index+2]) {
           this.moreOption = false;
+          msg.moreOption = false;
         }
         this.content.scrollToBottom(100).then(()=>{
           this.content.scrollToBottom(100);
         })
         this.headerMsg = Array.from(this.nextMsg.matchAll(this.rx), (m: any) => m[0].split(":")[0].split('.')[1])
-        lastmsg.text += '\n' + this.nextMsg
+        lastmsg.text += (/^[A-Z]/.test(this.nextMsg)) ? `\n\n`+ this.nextMsg : this.nextMsg;
       }
     }
   }

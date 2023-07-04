@@ -20,7 +20,8 @@ export class HomePage {
   supportedUserTypeConfig: Array<any> = []
   selectedUserType: any = "";
   isMenuOpen: boolean = true;
-  title: string = 'Teachmate';
+  title: string = 'LearnMate';
+  description: string;
   constructor(
     private router: Router,
     private barcodeScanner: BarcodeScanner,
@@ -29,19 +30,22 @@ export class HomePage {
   ) {
     this.supportedUserTypeConfig = [ {
       name: "Teacher",
+      appName: "TeachMate",
       code: 'teacher',
       image: 'teachBot.png',
-      selected: true
+      selected: false
     },
     {
       name: "Student",
       code: 'student',
+      appName: "LearnMate",
       image: 'ic_student.svg',
-      selected: false
+      selected: true
     }
    ]
-  //  this.selectedUserType = this.supportedUserTypeConfig[0].code;
-   this.userType = this.supportedUserTypeConfig[0].name;
+  //  this.selectedUserType = this.supportedUserTypeConfig[1].code;
+   this.userType = this.supportedUserTypeConfig[1].name;
+   this.description = this.userType == 'Teacher' ? "Every teacher's companion" : '';
   }
 
   URLToObject(url: any) {
@@ -200,9 +204,11 @@ export class HomePage {
     console.log('event ', e, user);
     this.selectedUserType = user.code;
     if(this.selectedUserType == 'student') {
-      this.title = 'Learnmate'
+      this.title = 'LearnMate'
+      this.description = ""
     } else {
-      this.title = "Teachmate"
+      this.title = "TeachMate"
+      this.description = "Every teacher's companion"
     }
     this.supportedUserTypeConfig.forEach(usr => {
       if(usr.code == this.selectedUserType) {
