@@ -153,7 +153,7 @@ export class ContentDetailsPage implements OnInit {
       let url = `${environment.baseUrl}=${this.question}`;
       console.log('url is', url)
       this.question = "";
-      this.handleApiCall(url);
+      this.handleApiCall(url, '');
     }
   }
   chatStream(url: any) {
@@ -270,7 +270,7 @@ export class ContentDetailsPage implements OnInit {
       query = (query+` in ${this.selectedLanguage}`).split(' ').join('%20');
       let url = environment.baseUrl+'='+query;
       console.log('url ', url)
-      this.handleApiCall(url, type);
+      this.handleApiCall(url, type.name);
     }
   }
 
@@ -300,56 +300,55 @@ export class ContentDetailsPage implements OnInit {
     this.chatStream(url).subscribe({
       next: (text: any) => {
         let msgText = this.messages[this.messages.length-1];
-        // if (msgText.text.length <= 100 && (/^[-:.)?\d]*/g).test(msgText.text)) {
-        //   console.log('if cndtn ', text);
-        //   botMsg += text;
-        //   msgText.text += text;
-        // } else {
-          // if(botMsg) {
-          //   msgText.moreArray.push(botMsg)
-          //   botMsg = '';
-          // }
-          // array += text;
-          // console.log('msgText.moreArray.length ', msgText.moreArray.length, msgText.moreArray);
-          // if (msgText.moreArray.length == 0) {
-          //   this.messages[this.messages.length-1].text += text
-          // }
-          // console.log('else cndtn ', text, msgText.moreArray);
-          // if((/\n\n-/g.test(text))) {
-          //   // if(((/\d+[.):]/g.test(text)) || (/-/.test(text)))) {
-          //   console.log('else if cndtn');
-          //   msgText.moreArray.push(array);
-          //   array = '';
-          // }
-        // }
         array += text
-        if(!textArray) {
-          msgText.text += text
-          this.nextMsg += text
-        } 
         if(type == 'Explain more' || type == 'Stories') {
-          if (array.length > 100) {
+          if (array.length > 100 || /\n/g.test(array) || /- /g.test(array) || /\d+[.:]/g.test(array) || /[A-Za-z]\d/g.test(array)) {
             textArray = true;
-            msgText.moreArray.push(array);
+            msgText.moreArray.push(botMsg.substring(0, botMsg.length - 1));
             msgText.moreOption = true;
-            array = ''
+            this.content.scrollToBottom(300).then(() => {
+              this.content.scrollToBottom(300)
+            })
+            array = array.substring(array.length - 1)
+            botMsg = botMsg.substring(botMsg.length - 1)
           }
-        } else if (/:|-/g.test(array) || /\d+[.):]/g.test(array)) {
-          textArray = true;
-          console.log('array ', array);
-          console.log('botMsg ', botMsg);
-          msgText.moreArray.push(botMsg);
-          msgText.moreOption = true;
-          array = ''
-          botMsg = ''
+        } else {
+          if (/- /g.test(array) || /\d+[.:]/g.test(array) || /[A-Za-z]\d/g.test(array)) {
+            textArray = true;
+            msgText.moreArray.push(botMsg.substring(0, botMsg.length - 1));
+            msgText.moreOption = true;
+            this.content.scrollToBottom(300).then(() => {
+              this.content.scrollToBottom(300)
+            })
+            array = array.substring(array.length - 1)
+            botMsg = botMsg.substring(botMsg.length - 1)
+          } else if(/\d[.] [A-Za-z][.]/g.test(array)) {
+            textArray = true;
+            msgText.moreArray.push(botMsg.substring(0, botMsg.length - 3));
+            msgText.moreOption = true;
+            this.content.scrollToBottom(300).then(() => {
+              this.content.scrollToBottom(300)
+            })
+            array = array.substring(array.length - 1)
+            botMsg = botMsg.substring(botMsg.length - 3)
+          }
         }
         botMsg += text;
+        if(!textArray) {
+          msgText.text = botMsg.substring(0, botMsg.length - 1)
+          this.nextMsg = botMsg.substring(0, botMsg.length - 1)
+          this.content.scrollToBottom(300).then(() => {
+            this.content.scrollToBottom(300)
+          })
+        }
         msgText.response += text
-        this.content.scrollToBottom(300)
       },
       complete: () => {
         this.messages[this.messages.length-1].moreArray.push(botMsg);
         this.messages[this.messages.length-1].moreOption = true;
+        this.content.scrollToBottom(300).then(() => {
+          this.content.scrollToBottom(300)
+        })
         if (this.messages[this.messages.length-1].moreArray.length == 0 || this.messages[this.messages.length-1].moreArray[0] == "") {
           this.messages[this.messages.length-1].moreOption = false;
           this.messages[this.messages.length-1].text = 'No Response';
@@ -509,34 +508,14 @@ export class ContentDetailsPage implements OnInit {
 
   nextMsgData(msg: any) {
     console.log('next message ', this.nextMsg);
-    console.log('msg ', msg);
+    console.log('message ', msg);
     let lastmsg = this.messages[this.messages.length-1];
     if (lastmsg.from == Creator.Bot && lastmsg.text && lastmsg.text !== 'No Response') {
       let index: number = 0
-      console.log('on next ', this.nextMsg)
-      // if (this.NextMessageArray) {
-      //   this.NextMessageArray.forEach((nxt: any, i: any) => {
-      //     if(nxt === this.nextMsg) {
-      //       index = i;
-      //       this.nextMsg = "";
-      //     }
-      //   })
-      //   if (this.NextMessageArray[index+1]) {
-      //     this.nextMsg = this.NextMessageArray[index+1]
-      //     console.log('no more ', this.NextMessageArray[index+2])
-      //     if (!this.NextMessageArray[index+2]) {
-      //       this.moreOption = false;
-      //       msg.moreOption = false;
-      //     }
-      //     this.content.scrollToBottom(100).then(()=>{
-      //       this.content.scrollToBottom(100);
-      //     })
-      //     this.headerMsg = Array.from(this.nextMsg.matchAll(this.rx), (m: any) => m[0].split(":")[0].split('.')[1])
-      //     lastmsg.text += (/^[A-Z]/.test(this.nextMsg)) ? `\n\n`+ this.nextMsg : this.nextMsg;
-      //   }
-      // }
+      let msgArr = '';
       msg.moreArray.forEach((nxt: any, i: any) => {
-        if(this.nextMsg === nxt) {
+        msgArr += nxt;
+        if(this.nextMsg === nxt && msgArr === msg.text) {
           console.log('if ', i, msg.moreArray.length, nxt);
           index = i
           this.nextMsg = ''
@@ -546,7 +525,16 @@ export class ContentDetailsPage implements OnInit {
         console.log('if condt next index ', msg.moreArray[index+1], this.nextMsg !== msg.moreArray[index+1]);
         this.nextMsg = ''
         this.nextMsg = msg.moreArray[index+1];
-        msg.text += msg.moreArray[index+1];
+        // let mArray = msg.moreArray[index+1].split(' ')
+        // console.log('mArray ', mArray);
+        // const dataStream = Readable.from(msg.moreArray[index+1])
+        // console.log('data stream  ', dataStream)
+        // mArray.forEach((arr: any) => {
+        //   // console.log('******* ', arr);
+        //   msg.text += ' ' + arr;
+        //   // console.log('******* msg ', msg.text);
+        // })
+        msg.text += msg.moreArray[index+1]
       }
       if(index+1 == msg.moreArray.length-1) {
         msg.moreOption = false;

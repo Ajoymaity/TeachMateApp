@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  baseUrl: "https://ncfchat.sunbird.org/ncert/ask?q",
+  baseUrl: "https://ncfsaarathi.sunbird.org/ncert/ask?q",
   production: false,
   questionGptUrl: "http://api.edsaathi.sunbird.org:8000/query-with-langchain-gpt4",
   qrBaseUrl: "https://staging.sunbirded.org/api/content/v1/search?orgdetails=orgName,email",
